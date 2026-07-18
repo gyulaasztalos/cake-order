@@ -1,5 +1,7 @@
 """Smoke tests for the skeleton app."""
 
+import os
+
 from fastapi.testclient import TestClient
 
 from app.main import app
@@ -15,8 +17,12 @@ def test_healthz():
 
 def test_readyz():
     r = client.get("/readyz")
-    assert r.status_code == 200
-    assert r.json()["status"] == "ready"
+    if os.getenv("DATABASE_URL"):
+        assert r.status_code == 200
+        assert r.json()["status"] == "ready"
+    else:
+        # No DB in a pure unit run → readiness must honestly say so.
+        assert r.status_code == 503
 
 
 def test_index_is_utf8_hungarian():

@@ -14,8 +14,11 @@ from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 
 from app import __version__
+from app.db import engine
 from app.i18n import resolve_locale, t
 from app.templating import templates
 
@@ -55,7 +58,12 @@ def healthz() -> JSONResponse:
 
 @app.get("/readyz")
 def readyz() -> JSONResponse:
-    # DB connectivity check lands with the DB layer (next increment).
+    # Ready = we can reach our database; k8s must not route traffic before that.
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except OperationalError:
+        return JSONResponse({"status": "not ready", "version": __version__}, status_code=503)
     return JSONResponse({"status": "ready", "version": __version__})
 
 
