@@ -35,6 +35,21 @@ If you change dependencies in `pyproject.toml`, regenerate the lockfile and comm
 uv lock
 ```
 
+## Gallery photos
+
+Photos are **never committed** (public repo) — the gallery pages auto-list
+whatever JPG/PNG/WebP files exist in `app/static/img/gallery/cakes/` and
+`app/static/img/gallery/desserts/` (sorted by filename). Locally, just drop
+files there; in production the directories are a read-only NFS mount from the
+NAS, so managing photos = copying files onto the share.
+
+Before uploading, resize phone photos to web size (macOS, run inside the
+photo folder — resizes in place to 1200 px long edge, ~85% smaller):
+
+```bash
+for f in *.jpg *.jpeg *.png; do sips -Z 1200 -s formatOptions 80 "$f" >/dev/null 2>&1; done
+```
+
 ## Docker
 
 ```bash
