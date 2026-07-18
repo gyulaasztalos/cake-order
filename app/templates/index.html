@@ -30,8 +30,8 @@
   <section class="co-section">
     <h2 class="co-section-title">{{ t('gallery.preview_title', locale) }}</h2>
     <div class="co-gallery-grid">
-      {% for i in [1, 2, 3] %}
-        <img src="/static/img/gallery/cake-{{ i }}.svg" alt="">
+      {% for photo in photos %}
+        <img src="{{ photo }}" alt="" loading="lazy">
       {% endfor %}
     </div>
     <p class="co-center"><a class="co-btn co-btn-outline" href="/tortak">{{ t('gallery.all', locale) }}</a></p>

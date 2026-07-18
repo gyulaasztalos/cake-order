@@ -21,6 +21,7 @@ def _form(**overrides) -> dict[str, str]:
         "phone": "+36 30 123 4567",
         "due_date": VALID_DUE,
         "cake_type": "birthday",
+        "flavor": "oreo",
         "portions": "16",
         "description": (
             "16 szeletes epres torta, vintage szív díszítéssel. Írás: „Boldog szülinapot”"
@@ -102,7 +103,10 @@ def test_happy_path_submit_then_verify(clean_db, fast_form, outbox):
     chef_msg, confirm_msg = outbox[1], outbox[2]
     assert chef_msg["To"] == "info@anitatortai.hu"
     assert chef_msg["Reply-To"] == "eva@example.com"
-    assert "Kovács Éva" in chef_msg.get_body(("plain",)).get_content()
+    chef_text = chef_msg.get_body(("plain",)).get_content()
+    assert "Kovács Éva" in chef_text
+    assert "Oreo" in chef_text  # flavor choice reaches the chef
+    assert "Születésnapi torta" in chef_text
     assert confirm_msg["To"] == "eva@example.com"
 
     from app.db import SessionLocal

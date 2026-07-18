@@ -58,8 +58,10 @@ class Order(Base):
     email: Mapped[str] = mapped_column(String(254), nullable=False)
     phone: Mapped[str | None] = mapped_column(String(32))
     due_date: Mapped[dt.date] = mapped_column(Date, nullable=False)
-    # Concept-form fields: cake type from a fixed option set, optional slices.
+    # Concept-form fields: cake type from a fixed option set, optional flavor
+    # (owner's list, i18n.FLAVORS) and optional slices.
     cake_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    flavor: Mapped[str | None] = mapped_column(String(32))
     portions: Mapped[int | None] = mapped_column()
     description: Mapped[str] = mapped_column(Text, nullable=False)
     locale: Mapped[str] = mapped_column(String(5), default="hu", nullable=False)

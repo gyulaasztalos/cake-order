@@ -4,6 +4,10 @@
 {{ t('email.field.email', locale) }}: {{ order.email }}
 {% if order.phone %}{{ t('email.field.phone', locale) }}: {{ order.phone }}
 {% endif %}{{ t('email.field.due_date', locale) }}: {{ order.due_date | date }}
+{{ t('email.field.cake_type', locale) }}: {{ t('form.cake_type.' ~ order.cake_type, locale) }}
+{% if order.flavor %}{{ t('email.field.flavor', locale) }}: {{ t('form.flavor.' ~ order.flavor, locale) }}
+{% endif %}{% if order.portions %}{{ t('email.field.portions', locale) }}: {{ order.portions }}
+{% endif %}
 
 {{ t('email.field.description', locale) }}:
 {{ order.description }}

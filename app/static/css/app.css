@@ -14,7 +14,9 @@
   --co-cocoa-soft: #8A7373;
   --co-line: #EBD9D6;
 
-  --co-script: "Great Vibes", "Snell Roundhand", cursive;
+  /* Dancing Script: its capital A is the enlarged-lowercase-a form used in the
+   * logo lettering (owner request — Great Vibes' swash A was rejected). */
+  --co-script: "Dancing Script", "Snell Roundhand", cursive;
   --co-serif: "Palatino", "Palatino Linotype", "Book Antiqua", Georgia, serif;
 
   --pico-border-radius: 10px;
@@ -44,7 +46,7 @@ body {
 
 .co-script {
   font-family: var(--co-script);
-  font-weight: 400;
+  font-weight: 700;
   color: var(--co-rose);
   line-height: 1.15;
 }
@@ -97,6 +99,7 @@ body {
 
 .co-brand-name {
   font-family: var(--co-script);
+  font-weight: 700;
   font-size: 1.9rem;
   color: var(--co-rose);
 }
@@ -406,6 +409,7 @@ body {
 .co-form-logo {
   display: block;
   margin: 0 auto;
+  border-radius: 50%;
 }
 
 .co-form-title {
@@ -507,6 +511,7 @@ body {
 
 .co-message h1 {
   font-family: var(--co-script);
+  font-weight: 700;
   font-size: 2.4rem;
   color: var(--co-rose);
 }

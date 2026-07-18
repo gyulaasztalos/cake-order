@@ -2,7 +2,7 @@
 {% block title %}{{ t('form.title', locale) }} — Anita Tortái{% endblock %}
 {% block content %}
   <section class="co-card co-form-card">
-    <img class="co-form-logo" src="/static/img/logo.svg" alt="" width="56" height="56">
+    <img class="co-form-logo" src="/static/img/logo-256.png" alt="" width="88" height="88">
     <h1 class="co-script co-form-title">{{ t('form.title', locale) }}</h1>
     <hr class="co-heart-rule">
     <p class="co-intro">{{ t('form.intro', locale) }}</p>
@@ -68,6 +68,19 @@
             {% endfor %}
           </select>
           {% if errors.get('cake_type') %}<small class="co-error">{{ t(errors['cake_type'], locale) }}</small>{% endif %}
+        </div>
+        <div>
+          <label for="flavor">{{ t('form.flavor', locale) }} <small>({{ t('form.flavor_hint', locale) }})</small></label>
+          <select id="flavor" name="flavor">
+            <option value="" {% if not data or not data.flavor %}selected{% endif %}>
+              {{ t('form.flavor_ph', locale) }}
+            </option>
+            {% for fl in flavors %}
+              <option value="{{ fl }}" {% if data and data.flavor == fl %}selected{% endif %}>
+                {{ t('form.flavor.' ~ fl, locale) }}
+              </option>
+            {% endfor %}
+          </select>
         </div>
         <div>
           <label for="portions">{{ t('form.portions', locale) }} <small>({{ t('form.optional', locale) }})</small></label>

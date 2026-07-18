@@ -9,19 +9,33 @@ from __future__ import annotations
 
 import datetime as dt
 import logging
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, Header, Request, Response
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db import get_session
-from app.i18n import CAKE_TYPES, enabled_locale_names, resolve_locale
+from app.i18n import CAKE_TYPES, FLAVORS, enabled_locale_names, resolve_locale
 from app.services import backend, mailer, orders, ratelimit
 from app.services.security import check_form_token, issue_form_token
 from app.templating import templates
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+# The owner drops real JPG photos into these directories (no code change
+# needed); until then the galleries fall back to the placeholder SVGs.
+_GALLERY_DIR = Path(__file__).parent.parent / "static" / "img" / "gallery"
+_PHOTO_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
+_PLACEHOLDERS = [f"/static/img/gallery/cake-{i}.svg" for i in (1, 2, 3)]
+
+
+def _gallery(kind: str) -> list[str]:
+    photos = sorted(
+        p.name for p in (_GALLERY_DIR / kind).glob("*") if p.suffix.lower() in _PHOTO_SUFFIXES
+    )
+    return [f"/static/img/gallery/{kind}/{name}" for name in photos] or _PLACEHOLDERS
 
 
 def _locale(request: Request) -> str:
@@ -43,6 +57,7 @@ def _form_ctx(request: Request, **extra: object) -> dict[str, object]:
         request,
         min_due=min_due.isoformat(),
         cake_types=CAKE_TYPES,
+        flavors=FLAVORS,
         form_token=issue_form_token(),
     )
     ctx.update({"data": None, "errors": {}, "banner": None})
@@ -55,17 +70,23 @@ def _form_ctx(request: Request, **extra: object) -> dict[str, object]:
 
 @router.get("/")
 def index(request: Request) -> Response:
-    return templates.TemplateResponse(request, "index.html", _ctx(request))
+    return templates.TemplateResponse(
+        request, "index.html", _ctx(request, photos=_gallery("cakes")[:3])
+    )
 
 
 @router.get("/tortak")
 def cakes(request: Request) -> Response:
-    return templates.TemplateResponse(request, "cakes.html", _ctx(request))
+    return templates.TemplateResponse(
+        request, "cakes.html", _ctx(request, photos=_gallery("cakes"))
+    )
 
 
 @router.get("/desszertek")
 def desserts(request: Request) -> Response:
-    return templates.TemplateResponse(request, "desserts.html", _ctx(request))
+    return templates.TemplateResponse(
+        request, "desserts.html", _ctx(request, photos=_gallery("desserts"))
+    )
 
 
 @router.get("/rolam")
@@ -100,6 +121,7 @@ def submit_offer(
     phone: str = Form(""),
     due_date: str = Form(""),
     cake_type: str = Form(""),
+    flavor: str = Form(""),
     portions: str = Form(""),
     description: str = Form(""),
     consent: bool = Form(False),
@@ -122,7 +144,7 @@ def submit_offer(
 
     def validated() -> orders.OrderInput:
         return orders.validate(
-            name, email, phone, due_date, cake_type, portions, description, consent
+            name, email, phone, due_date, cake_type, flavor, portions, description, consent
         )
 
     # 1) Honeypot: answer success, do nothing. Bots learn nothing.

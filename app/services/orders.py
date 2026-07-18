@@ -18,7 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.i18n import CAKE_TYPES
+from app.i18n import CAKE_TYPES, FLAVORS
 from app.models import Order
 
 # Permissive on purpose: digits, spaces, +, -, /, parentheses. It is a contact
@@ -33,6 +33,7 @@ class OrderInput:
     phone: str = ""
     due_date: dt.date | None = None
     cake_type: str = ""
+    flavor: str = ""
     portions: int | None = None
     description: str = ""
     errors: dict[str, str] = field(default_factory=dict)  # field -> i18n key
@@ -44,6 +45,7 @@ def validate(
     phone: str,
     due_date_raw: str,
     cake_type: str,
+    flavor: str,
     portions_raw: str,
     description: str,
     consent: bool,
@@ -53,6 +55,8 @@ def validate(
         email=email.strip(),
         phone=phone.strip(),
         cake_type=cake_type.strip(),
+        # Optional; anything outside the fixed list (tampering) is dropped.
+        flavor=flavor.strip() if flavor.strip() in FLAVORS else "",
         description=description.strip(),
     )
     if not data.name:
@@ -119,6 +123,7 @@ def create_or_refresh_pending(session: Session, data: OrderInput, locale: str) -
             phone=data.phone or None,
             due_date=data.due_date,
             cake_type=data.cake_type,
+            flavor=data.flavor or None,
             portions=data.portions,
             description=data.description,
             locale=locale,
@@ -132,6 +137,7 @@ def create_or_refresh_pending(session: Session, data: OrderInput, locale: str) -
         order.phone = data.phone or None
         order.due_date = data.due_date  # type: ignore[assignment]
         order.cake_type = data.cake_type
+        order.flavor = data.flavor or None
         order.portions = data.portions
         order.description = data.description
         order.locale = locale

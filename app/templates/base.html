@@ -7,16 +7,17 @@
   {# ?v= cache-busting: browsers must refetch CSS/JS on every release, so a
      cached old stylesheet can never be paired with new markup. #}
   <link rel="stylesheet" href="/static/vendor/pico.min.css?v={{ version }}">
-  <link rel="stylesheet" href="/static/vendor/great-vibes.css?v={{ version }}">
+  <link rel="stylesheet" href="/static/vendor/dancing-script.css?v={{ version }}">
   <link rel="stylesheet" href="/static/css/app.css?v={{ version }}">
-  <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/img/favicon-32.png" type="image/png">
+  <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
   {# Strict CSP: no inline scripts, no inline event handlers — ever. #}
 </head>
 <body>
   <header class="co-header">
     <div class="co-header-inner">
       <a class="co-brand" href="/">
-        <img class="co-logo" src="/static/img/logo.svg" alt="" width="52" height="52">
+        <img class="co-logo" src="/static/img/logo-256.png" alt="Anita Tortái" width="60" height="60">
         <span class="co-brand-text">
           <span class="co-brand-name">Anita Tortái</span>
           <span class="co-brand-tag">{{ t('app.tagline', locale) }} ♡</span>
