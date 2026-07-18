@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ t('app.title', locale) }}{% endblock %}</title>
-  <link rel="stylesheet" href="/static/vendor/pico.min.css">
-  <link rel="stylesheet" href="/static/vendor/great-vibes.css">
-  <link rel="stylesheet" href="/static/css/app.css">
+  {# ?v= cache-busting: browsers must refetch CSS/JS on every release, so a
+     cached old stylesheet can never be paired with new markup. #}
+  <link rel="stylesheet" href="/static/vendor/pico.min.css?v={{ version }}">
+  <link rel="stylesheet" href="/static/vendor/great-vibes.css?v={{ version }}">
+  <link rel="stylesheet" href="/static/css/app.css?v={{ version }}">
   <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
   {# Strict CSP: no inline scripts, no inline event handlers — ever. #}
 </head>
