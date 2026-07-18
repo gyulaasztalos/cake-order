@@ -1,0 +1,26 @@
+{# Order summary rows — user content is autoescaped by Jinja. #}
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%"
+       style="margin:16px 0;border-collapse:collapse;font-size:15px;">
+  <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;width:35%;font-weight:bold;">{{ t('email.field.name', locale) }}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ order.name }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;">{{ t('email.field.email', locale) }}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ order.email }}</td>
+  </tr>
+  {% if order.phone %}
+  <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;">{{ t('email.field.phone', locale) }}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ order.phone }}</td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;">{{ t('email.field.due_date', locale) }}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ order.due_date | date }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;vertical-align:top;">{{ t('email.field.description', locale) }}</td>
+    <td style="padding:8px 12px;white-space:pre-wrap;">{{ order.description }}</td>
+  </tr>
+</table>

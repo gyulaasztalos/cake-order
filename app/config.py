@@ -14,8 +14,12 @@ class Settings:
     app_env: str = os.getenv("APP_ENV", "prod")
     # Public base URL — verification links are built from this.
     base_url: str = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
-    # Default UI language; hu/en/de catalogs ship from day one.
+    # Default UI language; hu/en/de catalogs ship from day one, but only the
+    # locales listed here are selectable (de is built yet disabled at launch).
     default_locale: str = os.getenv("APP_LOCALE", "hu")
+    enabled_locales: tuple[str, ...] = tuple(
+        code.strip() for code in os.getenv("ENABLED_LOCALES", "hu,en").split(",") if code.strip()
+    )
 
     # --- form limits (§3.1) ---
     name_max: int = int(os.getenv("NAME_MAX", "120"))

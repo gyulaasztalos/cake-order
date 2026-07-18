@@ -1,0 +1,15 @@
+{% extends "email/_layout.html" %}
+{% block body %}
+  <p>{{ t('email.verify.greeting', locale, name=order.name) }}</p>
+  <p>{{ t('email.verify.body', locale) }}</p>
+  <p style="text-align:center;margin:28px 0;">
+    <a href="{{ verify_url }}"
+       style="display:inline-block;background:#8E2649;color:#FFF7F4;text-decoration:none;padding:14px 32px;border-radius:999px;font-size:16px;font-weight:bold;">
+      {{ t('email.verify.button', locale) }}
+    </a>
+  </p>
+  <p style="font-size:13px;color:#7A5C64;">{{ t('email.verify.link_hint', locale) }}<br>
+    <a href="{{ verify_url }}" style="color:#8E2649;word-break:break-all;">{{ verify_url }}</a></p>
+  <p style="font-size:13px;color:#7A5C64;">{{ t('email.verify.expiry', locale, hours=hours) }}
+    {{ t('email.verify.ignore', locale) }}</p>
+{% endblock %}

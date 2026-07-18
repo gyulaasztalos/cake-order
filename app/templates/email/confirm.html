@@ -1,0 +1,7 @@
+{% extends "email/_layout.html" %}
+{% block body %}
+  <p>{{ t('email.confirm.greeting', locale, name=order.name) }}</p>
+  <p>{{ t('email.confirm.body', locale) }}</p>
+  <h3 style="color:#8E2649;margin-bottom:0;">{{ t('email.confirm.summary', locale) }}</h3>
+  {% include "email/_order_table.html" %}
+{% endblock %}

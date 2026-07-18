@@ -1,0 +1,13 @@
+{{ t('email.confirm.greeting', locale, name=order.name) }}
+
+{{ t('email.confirm.body', locale) }}
+
+{{ t('email.confirm.summary', locale) }}
+{{ t('email.field.name', locale) }}: {{ order.name }}
+{% if order.phone %}{{ t('email.field.phone', locale) }}: {{ order.phone }}
+{% endif %}{{ t('email.field.due_date', locale) }}: {{ order.due_date | date }}
+
+{{ t('email.field.description', locale) }}:
+{{ order.description }}
+
+{{ t('email.footer', locale) }}

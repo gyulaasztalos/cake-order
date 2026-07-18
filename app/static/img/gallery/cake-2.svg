@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Placeholder reference photo: vintage heart cake. Replace with a real photo. -->
+  <rect width="200" height="200" fill="#FBF6F3"/>
+  <path d="M100 160 c-30-22 -55-40 -55-65 c0-18 14-30 30-30 c11 0 20 6 25 14 c5-8 14-14 25-14 c16 0 30 12 30 30 c0 25 -25 43 -55 65z" fill="#F5DEE5" stroke="#B24A6B" stroke-width="4"/>
+  <path d="M65 96 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0 q6 8 12 0" fill="none" stroke="#B24A6B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M100 128 c-6-4.8 -12-9 -12-14 c0-4 3-6.5 6.5-6.5 c2.3 0 4.3 1.2 5.5 3 c1.2-1.8 3.2-3 5.5-3 c3.5 0 6.5 2.5 6.5 6.5 c0 5 -6 9.2 -12 14z" fill="#8E2649"/>
+</svg>

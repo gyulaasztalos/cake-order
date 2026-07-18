@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!-- Placeholder logo — replace with the real anitatortai.hu logo file. -->
+  <circle cx="48" cy="48" r="46" fill="#F5DEE5"/>
+  <circle cx="48" cy="48" r="46" fill="none" stroke="#8E2649" stroke-width="3"/>
+  <!-- three-tier cake -->
+  <rect x="30" y="52" width="36" height="16" rx="3" fill="#8E2649"/>
+  <rect x="36" y="38" width="24" height="14" rx="3" fill="#B24A6B"/>
+  <rect x="41" y="26" width="14" height="12" rx="3" fill="#8E2649"/>
+  <!-- candle heart -->
+  <path d="M48 14 c-2.5-4 -8-2 -8 2 c0 3 4 5.5 8 8 c4-2.5 8-5 8-8 c0-4 -5.5-6 -8-2z" fill="#8E2649"/>
+  <!-- icing scallops on the plate -->
+  <path d="M28 70 q4 5 8 0 q4 5 8 0 q4 5 8 0 q4 5 8 0 q4 5 8 0" fill="none" stroke="#8E2649" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

@@ -19,8 +19,7 @@ from sqlalchemy.exc import OperationalError
 
 from app import __version__
 from app.db import engine
-from app.i18n import resolve_locale, t
-from app.templating import templates
+from app.routers import orders as orders_router
 
 app = FastAPI(
     title="cake-order", version=__version__, docs_url=None, redoc_url=None, openapi_url=None
@@ -67,9 +66,4 @@ def readyz() -> JSONResponse:
     return JSONResponse({"status": "ready", "version": __version__})
 
 
-@app.get("/")
-def index(request: Request) -> Response:
-    locale = resolve_locale(request.cookies.get("lang"))
-    return templates.TemplateResponse(
-        request, "index.html", {"locale": locale, "title": t("app.title", locale)}
-    )
+app.include_router(orders_router.router)

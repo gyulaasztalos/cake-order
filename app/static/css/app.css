@@ -1,10 +1,257 @@
-/* cake-order theme on top of Pico.css — refined during the design pass. */
+/* cake-order theme — "cukrász manufaktúra" look on top of Pico.css.
+ *
+ * Palette (PLANNING §design): icing white page, deep raspberry accents, blush
+ * cards, cocoa text, pistachio for success notes. Signature element: the
+ * scalloped piped-icing edge on the order card. No external fonts (strict CSP,
+ * lean): Palatino serif stack for display, system sans for body.
+ */
+
+:root {
+  --co-icing: #FBF6F3;
+  --co-raspberry: #8E2649;
+  --co-raspberry-dark: #6E1C38;
+  --co-blush: #F5DEE5;
+  --co-cocoa: #3A2A2E;
+  --co-cocoa-soft: #7A5C64;
+  --co-pistachio: #6F8F63;
+
+  --co-display: "Palatino", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+
+  /* Re-tune Pico to the palette. */
+  --pico-background-color: var(--co-icing);
+  --pico-color: var(--co-cocoa);
+  --pico-primary: var(--co-raspberry);
+  --pico-primary-background: var(--co-raspberry);
+  --pico-primary-border: var(--co-raspberry);
+  --pico-primary-hover: var(--co-raspberry-dark);
+  --pico-primary-hover-background: var(--co-raspberry-dark);
+  --pico-primary-underline: var(--co-raspberry);
+  --pico-primary-focus: color-mix(in srgb, var(--co-raspberry) 40%, transparent);
+  --pico-border-radius: 10px;
+}
+
+/* Pico's [data-theme=light] block outranks :root vars — restate the palette
+ * at the same specificity so the raspberry theme actually wins. */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --pico-background-color: var(--co-icing);
+  --pico-color: var(--co-cocoa);
+  --pico-primary: var(--co-raspberry);
+  --pico-primary-background: var(--co-raspberry);
+  --pico-primary-border: var(--co-raspberry);
+  --pico-primary-hover: var(--co-raspberry-dark);
+  --pico-primary-hover-background: var(--co-raspberry-dark);
+  --pico-primary-hover-border: var(--co-raspberry-dark);
+  --pico-primary-underline: var(--co-raspberry);
+  --pico-primary-focus: color-mix(in srgb, var(--co-raspberry) 40%, transparent);
+  --pico-primary-inverse: #FFF7F4;
+}
+
+body {
+  background: var(--co-icing);
+}
+
+/* --- header ---------------------------------------------------------------- */
+
+.co-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.co-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--co-raspberry);
+}
+
+.co-brand-name {
+  font-family: var(--co-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.co-logo {
+  border-radius: 50%;
+}
+
+.co-lang {
+  margin: 0;
+  width: auto;
+}
+
+.co-lang summary {
+  font-size: 0.9rem;
+  padding: 0.35rem 0.9rem;
+}
+
+/* --- layout ---------------------------------------------------------------- */
 
 .co-shell {
-  max-width: 44rem;
-  padding: 2rem 1rem;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0.5rem 1rem 2rem;
 }
 
 .co-hero {
   text-align: center;
+  margin: 1.5rem 0 1rem;
+}
+
+.co-hero h1 {
+  font-family: var(--co-display);
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  color: var(--co-raspberry);
+  margin-bottom: 0.3rem;
+}
+
+.co-tagline {
+  color: var(--co-cocoa-soft);
+  font-size: 1.05rem;
+}
+
+/* --- gallery: round "cake tops" -------------------------------------------- */
+
+.co-gallery {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0 2.25rem;
+}
+
+.co-gallery img {
+  width: clamp(84px, 22vw, 130px);
+  height: clamp(84px, 22vw, 130px);
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: 0 6px 18px rgb(142 38 73 / 0.15);
+  object-fit: cover;
+}
+
+.co-gallery img:nth-child(2) {
+  transform: translateY(-8px);
+}
+
+/* --- the order card with its piped-icing scalloped edge -------------------- */
+
+.co-card {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding: 2.5rem 1.75rem 1.75rem;
+  box-shadow: 0 10px 30px rgb(58 42 46 / 0.08);
+  margin-bottom: 2rem;
+}
+
+.co-card::before {
+  /* Scallops "piped" along the top edge, like icing on a cake. */
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 18px;
+  border-radius: 14px 14px 0 0;
+  background:
+    radial-gradient(circle at 11px 0, var(--co-blush) 10px, transparent 11px) top left / 22px 18px repeat-x;
+}
+
+.co-intro {
+  color: var(--co-cocoa-soft);
+  margin-bottom: 1.5rem;
+}
+
+/* --- form ------------------------------------------------------------------ */
+
+.co-error {
+  color: var(--co-raspberry);
+  font-weight: 600;
+}
+
+.co-banner {
+  background: var(--co-blush);
+  border-left: 4px solid var(--co-raspberry);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  color: var(--co-raspberry-dark);
+}
+
+.co-consent {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin: 1rem 0;
+}
+
+.co-submit {
+  width: 100%;
+  font-size: 1.1rem;
+  font-family: var(--co-display);
+  border-radius: 999px;
+  padding: 0.85rem;
+  transition: transform 0.15s ease;
+}
+
+.co-submit:hover,
+.co-submit:focus-visible {
+  transform: translateY(-2px);
+}
+
+/* Honeypot: removed from the visual and accessibility tree, still submitted. */
+.co-hp {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+}
+
+/* --- message + prose pages -------------------------------------------------- */
+
+.co-message {
+  text-align: center;
+}
+
+.co-message h1 {
+  font-family: var(--co-display);
+  color: var(--co-raspberry);
+}
+
+.co-message-icon {
+  margin-bottom: 0.5rem;
+}
+
+.co-prose h1 {
+  font-family: var(--co-display);
+  color: var(--co-raspberry);
+  font-size: 1.6rem;
+}
+
+.co-prose p {
+  font-size: 0.95rem;
+}
+
+/* --- footer ----------------------------------------------------------------- */
+
+.co-footer {
+  text-align: center;
+  padding: 1rem 0 2rem;
+  color: var(--co-cocoa-soft);
+  font-size: 0.9rem;
+}
+
+.co-footer a {
+  color: var(--co-cocoa-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .co-submit {
+    transition: none;
+  }
+  .co-submit:hover,
+  .co-submit:focus-visible {
+    transform: none;
+  }
 }

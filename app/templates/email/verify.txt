@@ -1,0 +1,10 @@
+{{ t('email.verify.greeting', locale, name=order.name) }}
+
+{{ t('email.verify.body', locale) }}
+
+{{ t('email.verify.button', locale) }}: {{ verify_url }}
+
+{{ t('email.verify.expiry', locale, hours=hours) }}
+{{ t('email.verify.ignore', locale) }}
+
+{{ t('email.footer', locale) }}

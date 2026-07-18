@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="co-card co-message">
+    <img class="co-message-icon" src="/static/img/mail.svg" alt="" width="72" height="72">
+    <h1>{{ t('submitted.title', locale) }}</h1>
+    <p>{{ t('submitted.body', locale, email=email, hours=hours) }}</p>
+    <p><small>{{ t('submitted.spam_hint', locale) }}</small></p>
+  </section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{{ t('email.chef.title', locale) }}
+
+{{ t('email.field.name', locale) }}: {{ order.name }}
+{{ t('email.field.email', locale) }}: {{ order.email }}
+{% if order.phone %}{{ t('email.field.phone', locale) }}: {{ order.phone }}
+{% endif %}{{ t('email.field.due_date', locale) }}: {{ order.due_date | date }}
+
+{{ t('email.field.description', locale) }}:
+{{ order.description }}
+
+{{ t('email.footer', locale) }}

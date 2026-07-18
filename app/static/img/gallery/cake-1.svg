@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Placeholder reference photo: strawberry cake. Replace with a real photo. -->
+  <rect width="200" height="200" fill="#F5DEE5"/>
+  <rect x="40" y="90" width="120" height="70" rx="8" fill="#FBF6F3"/>
+  <path d="M40 98 q10 12 20 0 q10 12 20 0 q10 12 20 0 q10 12 20 0 q10 12 20 0 q10 12 20 0 v-10 h-120z" fill="#B24A6B"/>
+  <rect x="40" y="88" width="120" height="10" rx="5" fill="#B24A6B"/>
+  <g fill="#8E2649">
+    <ellipse cx="70" cy="80" rx="9" ry="11"/>
+    <ellipse cx="100" cy="76" rx="10" ry="12"/>
+    <ellipse cx="130" cy="80" rx="9" ry="11"/>
+  </g>
+  <g fill="#6F8F63">
+    <path d="M70 69 l-5 -7 5 2 3 -5 2 5 5 -2z"/>
+    <path d="M100 64 l-5 -7 5 2 3 -5 2 5 5 -2z"/>
+    <path d="M130 69 l-5 -7 5 2 3 -5 2 5 5 -2z"/>
+  </g>
+</svg>

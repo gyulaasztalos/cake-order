@@ -6,11 +6,32 @@
   <title>{% block title %}{{ t('app.title', locale) }}{% endblock %}</title>
   <link rel="stylesheet" href="/static/vendor/pico.min.css">
   <link rel="stylesheet" href="/static/css/app.css">
+  <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
   {# Strict CSP: no inline scripts, no inline event handlers — ever. #}
 </head>
 <body>
-  <main class="co-shell container">
+  <header class="co-header">
+    <a class="co-brand" href="/">
+      <img class="co-logo" src="/static/img/logo.svg" alt="Anita Tortái" width="48" height="48">
+      <span class="co-brand-name">Anita Tortái</span>
+    </a>
+    <details class="co-lang dropdown">
+      <summary aria-label="{{ t('app.language', locale) }}">{{ locales[locale] }}</summary>
+      <ul>
+        {% for code, label in locales.items() %}
+          <li><a href="/?lang={{ code }}" {% if code == locale %}aria-current="true"{% endif %}>{{ label }}</a></li>
+        {% endfor %}
+      </ul>
+    </details>
+  </header>
+  <main class="co-shell">
     {% block content %}{% endblock %}
   </main>
+  <footer class="co-footer">
+    <a href="/privacy">{{ t('nav.privacy', locale) }}</a>
+    <span aria-hidden="true">·</span>
+    <a href="https://www.facebook.com/anitatortaihu/" rel="noopener external">Facebook</a>
+  </footer>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

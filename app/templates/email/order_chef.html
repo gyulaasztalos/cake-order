@@ -1,0 +1,5 @@
+{% extends "email/_layout.html" %}
+{% block body %}
+  <h2 style="margin-top:0;color:#8E2649;">{{ t('email.chef.title', locale) }}</h2>
+  {% include "email/_order_table.html" %}
+{% endblock %}

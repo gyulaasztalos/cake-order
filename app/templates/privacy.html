@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ t('privacy.title', locale) }}{% endblock %}
+{% block content %}
+  <section class="co-card co-prose">
+    <h1>{{ t('privacy.title', locale) }}</h1>
+
+    {% if locale == 'en' %}
+      <p><strong>Data controller:</strong> Anita Tortái (anitatortai.hu) —
+        contact: info@anitatortai.hu.</p>
+      <p><strong>What we collect and why.</strong> When you place an order we ask for
+        your name, e-mail address, optional phone number, the requested date, and your
+        cake description. We use these solely to verify your e-mail address, to prepare
+        a price offer, and to contact you about your order.</p>
+      <p><strong>Legal basis.</strong> Your consent (GDPR Art. 6(1)(a)) and steps prior
+        to entering into a contract (Art. 6(1)(b)).</p>
+      <p><strong>Retention.</strong> Unverified submissions are deleted after 48 hours.
+        Verified orders are deleted from this system after 30 days; the order itself
+        continues in our e-mail correspondence and offer records for as long as needed
+        to fulfil it and to meet legal obligations.</p>
+      <p><strong>Cookies.</strong> A single cookie stores your language choice. No
+        analytics, no tracking, no third-party services.</p>
+      <p><strong>Recipients.</strong> Your data is not shared with third parties; it is
+        processed on our own infrastructure and delivered to us by e-mail.</p>
+      <p><strong>Your rights.</strong> You may request access, correction, or deletion
+        of your data, and withdraw consent at any time, at info@anitatortai.hu. You may
+        lodge a complaint with the Hungarian supervisory authority (NAIH,
+        naih.hu).</p>
+    {% elif locale == 'de' %}
+      <p><strong>Verantwortlicher:</strong> Anita Tortái (anitatortai.hu) —
+        Kontakt: info@anitatortai.hu.</p>
+      <p><strong>Was wir erheben und warum.</strong> Bei einer Bestellung fragen wir
+        nach Ihrem Namen, Ihrer E-Mail-Adresse, optional Ihrer Telefonnummer, dem
+        gewünschten Termin und Ihrer Tortenbeschreibung. Wir verwenden diese Daten
+        ausschließlich zur Bestätigung Ihrer E-Mail-Adresse, zur Erstellung eines
+        Angebots und zur Kontaktaufnahme bezüglich Ihrer Bestellung.</p>
+      <p><strong>Rechtsgrundlage.</strong> Ihre Einwilligung (Art. 6 Abs. 1 lit. a
+        DSGVO) und vorvertragliche Maßnahmen (Art. 6 Abs. 1 lit. b DSGVO).</p>
+      <p><strong>Speicherdauer.</strong> Nicht bestätigte Anfragen werden nach 48
+        Stunden gelöscht. Bestätigte Bestellungen werden nach 30 Tagen aus diesem
+        System gelöscht; die Bestellung selbst wird in unserer E-Mail-Korrespondenz
+        und den Angebotsunterlagen so lange aufbewahrt, wie es für die Erfüllung und
+        gesetzliche Pflichten erforderlich ist.</p>
+      <p><strong>Cookies.</strong> Ein einziges Cookie speichert Ihre Sprachwahl.
+        Keine Analyse, kein Tracking, keine Drittanbieter.</p>
+      <p><strong>Empfänger.</strong> Ihre Daten werden nicht an Dritte weitergegeben;
+        sie werden auf unserer eigenen Infrastruktur verarbeitet und uns per E-Mail
+        zugestellt.</p>
+      <p><strong>Ihre Rechte.</strong> Sie können jederzeit Auskunft, Berichtigung
+        oder Löschung Ihrer Daten verlangen und Ihre Einwilligung widerrufen:
+        info@anitatortai.hu. Beschwerden richten Sie an die ungarische
+        Aufsichtsbehörde (NAIH, naih.hu).</p>
+    {% else %}
+      <p><strong>Adatkezelő:</strong> Anita Tortái (anitatortai.hu) —
+        kapcsolat: info@anitatortai.hu.</p>
+      <p><strong>Milyen adatokat kezelünk és miért?</strong> Rendeléskor elkérjük a
+        nevét, e-mail címét, opcionálisan telefonszámát, a kért határidőt és a torta
+        leírását. Ezeket kizárólag az e-mail cím megerősítésére, az árajánlat
+        elkészítésére és a rendeléssel kapcsolatos kapcsolattartásra használjuk.</p>
+      <p><strong>Jogalap.</strong> Az Ön hozzájárulása (GDPR 6. cikk (1) a)) és a
+        szerződéskötést megelőző lépések (6. cikk (1) b)).</p>
+      <p><strong>Megőrzési idő.</strong> A meg nem erősített beküldéseket 48 óra után
+        töröljük. A megerősített rendelések 30 nap után törlődnek ebből a rendszerből;
+        maga a rendelés az e-mail levelezésünkben és az ajánlat-nyilvántartásban él
+        tovább, ameddig a teljesítéshez és a jogszabályi kötelezettségekhez szükséges.</p>
+      <p><strong>Sütik.</strong> Egyetlen süti a nyelvválasztást tárolja. Nincs
+        analitika, nincs követés, nincsenek külső szolgáltatók.</p>
+      <p><strong>Címzettek.</strong> Adatait harmadik félnek nem adjuk át; saját
+        infrastruktúránkon dolgozzuk fel, és e-mailben jut el hozzánk.</p>
+      <p><strong>Az Ön jogai.</strong> Bármikor kérhet hozzáférést, helyesbítést vagy
+        törlést, és visszavonhatja hozzájárulását: info@anitatortai.hu. Panasszal a
+        NAIH-hoz (naih.hu) fordulhat.</p>
+    {% endif %}
+
+    <p><a href="/">{{ t('verify.back_home', locale) }}</a></p>
+  </section>
+{% endblock %}

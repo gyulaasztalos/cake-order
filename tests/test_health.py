@@ -29,7 +29,7 @@ def test_index_is_utf8_hungarian():
     r = client.get("/")
     assert r.status_code == 200
     # Hungarian accented text must survive round-trip (UTF-8 is critical).
-    assert "Anita tortái" in r.text
+    assert "Anita Tortái" in r.text
 
 
 def test_api_docs_disabled():

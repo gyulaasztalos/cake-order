@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+  <section class="co-card co-message">
+    <h1>{{ t('verify.invalid.title', locale) }}</h1>
+    <p>{{ t('verify.invalid.body', locale) }}</p>
+    <p><a href="/">{{ t('verify.back_home', locale) }}</a></p>
+  </section>
+{% endblock %}

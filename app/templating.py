@@ -7,6 +7,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi.templating import Jinja2Templates
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from app import __version__
 from app.config import settings
@@ -31,6 +32,15 @@ def format_date(value: dt.datetime | dt.date | None) -> str:
 
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+# E-mail rendering: autoescape must apply to .html bodies but NOT to .txt
+# alternatives (plain text with HTML entities would be garbage).
+email_env = Environment(
+    loader=FileSystemLoader(str(TEMPLATES_DIR)),
+    autoescape=select_autoescape(["html"]),
+)
+email_env.globals["t"] = t
+email_env.filters["date"] = format_date
 templates.env.globals["t"] = t
 templates.env.globals["default_locale"] = settings.default_locale
 templates.env.globals["app_env"] = settings.app_env
