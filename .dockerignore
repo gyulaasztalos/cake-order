@@ -12,3 +12,5 @@ __pycache__
 PLANNING.md
 NOTES.md
 tests
+app/static/img/gallery/cakes
+app/static/img/gallery/desserts

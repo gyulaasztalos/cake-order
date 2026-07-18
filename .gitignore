@@ -2,6 +2,13 @@
 PLANNING.md
 NOTES.md
 
+# --- Gallery photos — NEVER in git: this repo is public, and in production
+# --- the photos come from a mounted volume, not from the image (PLANNING §r3).
+app/static/img/gallery/cakes/*
+app/static/img/gallery/desserts/*
+!app/static/img/gallery/cakes/.gitkeep
+!app/static/img/gallery/desserts/.gitkeep
+
 # --- Python ---
 __pycache__/
 *.py[cod]
