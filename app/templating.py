@@ -1,0 +1,38 @@
+"""Jinja environment + shared template globals/filters."""
+
+from __future__ import annotations
+
+import datetime as dt
+from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+from fastapi.templating import Jinja2Templates
+
+from app import __version__
+from app.config import settings
+from app.i18n import t
+
+TEMPLATES_DIR = Path(__file__).parent / "templates"
+
+_LOCAL_TZ: ZoneInfo | None
+try:
+    _LOCAL_TZ = ZoneInfo("Europe/Budapest")
+except ZoneInfoNotFoundError:  # pragma: no cover - fallback if tzdata missing
+    _LOCAL_TZ = None
+
+
+def format_date(value: dt.datetime | dt.date | None) -> str:
+    """Hungarian standard date: YYYY-MM-DD."""
+    if value is None:
+        return "—"
+    if isinstance(value, dt.datetime) and _LOCAL_TZ is not None and value.tzinfo is not None:
+        value = value.astimezone(_LOCAL_TZ)
+    return value.strftime("%Y-%m-%d")
+
+
+templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+templates.env.globals["t"] = t
+templates.env.globals["default_locale"] = settings.default_locale
+templates.env.globals["app_env"] = settings.app_env
+templates.env.globals["version"] = __version__
+templates.env.filters["date"] = format_date

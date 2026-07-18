@@ -1,0 +1,45 @@
+name: CI
+
+# Public-facing app → stricter than the internal siblings: lint, types, tests,
+# and security scans run on EVERY push and PR, not only on release tags.
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies
+        run: uv sync --frozen
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Format check (ruff)
+        run: uv run ruff format --check .
+
+      - name: Types (mypy)
+        run: uv run mypy
+
+      - name: Tests (pytest)
+        run: uv run pytest
+
+      - name: Security scan (bandit)
+        run: uv run bandit -c pyproject.toml -r app
+
+      - name: Dependency audit (pip-audit)
+        run: uv run pip-audit

@@ -1,0 +1,10 @@
+/* cake-order theme on top of Pico.css — refined during the design pass. */
+
+.co-shell {
+  max-width: 44rem;
+  padding: 2rem 1rem;
+}
+
+.co-hero {
+  text-align: center;
+}
