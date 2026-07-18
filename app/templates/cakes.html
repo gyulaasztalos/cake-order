@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ t('gallery.title', locale) }} — Anita Tortái{% endblock %}
+{% block content %}
+  <section class="co-section">
+    <h1 class="co-script co-page-title">{{ t('gallery.title', locale) }}</h1>
+    <hr class="co-heart-rule">
+    {# Placeholder gallery — the owner's real cake photos replace these SVGs
+       (drop them into app/static/img/gallery/ and extend the list). #}
+    <div class="co-gallery-grid co-gallery-large">
+      {% for i in [1, 2, 3, 1, 2, 3] %}
+        <img src="/static/img/gallery/cake-{{ i }}.svg" alt="">
+      {% endfor %}
+    </div>
+    <p class="co-center"><small>{{ t('gallery.placeholder_note', locale) }}</small></p>
+    <p class="co-center"><a class="co-btn" href="/ajanlatkeres">{{ t('hero.cta', locale) }}</a></p>
+  </section>
+{% endblock %}

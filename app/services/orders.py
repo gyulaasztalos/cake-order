@@ -18,6 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
+from app.i18n import CAKE_TYPES
 from app.models import Order
 
 # Permissive on purpose: digits, spaces, +, -, /, parentheses. It is a contact
@@ -31,17 +32,27 @@ class OrderInput:
     email: str = ""
     phone: str = ""
     due_date: dt.date | None = None
+    cake_type: str = ""
+    portions: int | None = None
     description: str = ""
     errors: dict[str, str] = field(default_factory=dict)  # field -> i18n key
 
 
 def validate(
-    name: str, email: str, phone: str, due_date_raw: str, description: str, consent: bool
+    name: str,
+    email: str,
+    phone: str,
+    due_date_raw: str,
+    cake_type: str,
+    portions_raw: str,
+    description: str,
+    consent: bool,
 ) -> OrderInput:
     data = OrderInput(
         name=name.strip()[: settings.name_max],
         email=email.strip(),
         phone=phone.strip(),
+        cake_type=cake_type.strip(),
         description=description.strip(),
     )
     if not data.name:
@@ -63,6 +74,18 @@ def validate(
         earliest = dt.date.today() + dt.timedelta(days=settings.min_lead_days)
         if data.due_date < earliest:
             data.errors["due_date"] = "error.due_date_too_soon"
+
+    if data.cake_type not in CAKE_TYPES:
+        data.errors["cake_type"] = "error.cake_type_required"
+
+    if portions_raw.strip():
+        try:
+            data.portions = int(portions_raw)
+        except ValueError:
+            data.errors["portions"] = "error.portions_invalid"
+        else:
+            if not 1 <= data.portions <= 500:
+                data.errors["portions"] = "error.portions_invalid"
 
     if not data.description:
         data.errors["description"] = "error.description_required"
@@ -95,6 +118,8 @@ def create_or_refresh_pending(session: Session, data: OrderInput, locale: str) -
             email=data.email,
             phone=data.phone or None,
             due_date=data.due_date,
+            cake_type=data.cake_type,
+            portions=data.portions,
             description=data.description,
             locale=locale,
             consent_at=now,
@@ -106,6 +131,8 @@ def create_or_refresh_pending(session: Session, data: OrderInput, locale: str) -
         order.name = data.name
         order.phone = data.phone or None
         order.due_date = data.due_date  # type: ignore[assignment]
+        order.cake_type = data.cake_type
+        order.portions = data.portions
         order.description = data.description
         order.locale = locale
         order.consent_at = now

@@ -5,32 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ t('app.title', locale) }}{% endblock %}</title>
   <link rel="stylesheet" href="/static/vendor/pico.min.css">
+  <link rel="stylesheet" href="/static/vendor/great-vibes.css">
   <link rel="stylesheet" href="/static/css/app.css">
   <link rel="icon" href="/static/img/logo.svg" type="image/svg+xml">
   {# Strict CSP: no inline scripts, no inline event handlers — ever. #}
 </head>
 <body>
   <header class="co-header">
-    <a class="co-brand" href="/">
-      <img class="co-logo" src="/static/img/logo.svg" alt="Anita Tortái" width="48" height="48">
-      <span class="co-brand-name">Anita Tortái</span>
-    </a>
-    <details class="co-lang dropdown">
-      <summary aria-label="{{ t('app.language', locale) }}">{{ locales[locale] }}</summary>
-      <ul>
-        {% for code, label in locales.items() %}
-          <li><a href="/?lang={{ code }}" {% if code == locale %}aria-current="true"{% endif %}>{{ label }}</a></li>
-        {% endfor %}
-      </ul>
-    </details>
+    <div class="co-header-inner">
+      <a class="co-brand" href="/">
+        <img class="co-logo" src="/static/img/logo.svg" alt="" width="52" height="52">
+        <span class="co-brand-text">
+          <span class="co-brand-name">Anita Tortái</span>
+          <span class="co-brand-tag">{{ t('app.tagline', locale) }} ♡</span>
+        </span>
+      </a>
+      <nav class="co-nav" aria-label="menu">
+        <a href="/" {% if request.url.path == '/' %}aria-current="page"{% endif %}>{{ t('nav.home', locale) }}</a>
+        <a href="/tortak" {% if request.url.path == '/tortak' %}aria-current="page"{% endif %}>{{ t('nav.cakes', locale) }}</a>
+        <a href="/desszertek" {% if request.url.path == '/desszertek' %}aria-current="page"{% endif %}>{{ t('nav.desserts', locale) }}</a>
+        <a href="/rolam" {% if request.url.path == '/rolam' %}aria-current="page"{% endif %}>{{ t('nav.about', locale) }}</a>
+        <a href="/kapcsolat" {% if request.url.path == '/kapcsolat' %}aria-current="page"{% endif %}>{{ t('nav.contact', locale) }}</a>
+        <a class="co-nav-cta" href="/ajanlatkeres">{{ t('nav.offer', locale) }}</a>
+      </nav>
+      <div class="co-header-side">
+        <a class="co-social" href="https://www.facebook.com/anitatortaihu/" rel="noopener external" aria-label="Facebook">
+          <img src="/static/img/icons/facebook.svg" alt="" width="20" height="20">
+        </a>
+        <details class="co-lang dropdown">
+          <summary aria-label="{{ t('app.language', locale) }}">{{ locales[locale] }}</summary>
+          <ul>
+            {% for code, label in locales.items() %}
+              <li><a href="{{ request.url.path }}?lang={{ code }}" {% if code == locale %}aria-current="true"{% endif %}>{{ label }}</a></li>
+            {% endfor %}
+          </ul>
+        </details>
+      </div>
+    </div>
   </header>
   <main class="co-shell">
     {% block content %}{% endblock %}
   </main>
   <footer class="co-footer">
-    <a href="/privacy">{{ t('nav.privacy', locale) }}</a>
-    <span aria-hidden="true">·</span>
-    <a href="https://www.facebook.com/anitatortaihu/" rel="noopener external">Facebook</a>
+    <div class="co-footer-grid">
+      <div>
+        <span class="co-brand-name co-footer-brand">Anita Tortái</span>
+        <p>{{ t('footer.blurb', locale) }}</p>
+      </div>
+      <div>
+        <h4>{{ t('footer.contact', locale) }}</h4>
+        <p><a href="mailto:info@anitatortai.hu">info@anitatortai.hu</a></p>
+        <p>{{ t('contact.area', locale) }}</p>
+      </div>
+      <div>
+        <h4>{{ t('footer.info', locale) }}</h4>
+        <p><a href="/rolam">{{ t('nav.about', locale) }}</a></p>
+        <p><a href="/privacy">{{ t('nav.privacy', locale) }}</a></p>
+      </div>
+      <div>
+        <h4>{{ t('nav.offer', locale) }}</h4>
+        <p><a class="co-btn" href="/ajanlatkeres">{{ t('hero.cta', locale) }}</a></p>
+        <p><small>{{ t('footer.offer_hint', locale) }}</small></p>
+      </div>
+    </div>
+    <p class="co-footer-legal">© {{ year }} Anita Tortái — {{ t('footer.rights', locale) }}</p>
   </footer>
   {% block scripts %}{% endblock %}
 </body>

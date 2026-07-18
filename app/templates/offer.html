@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ t('form.title', locale) }} — Anita Tortái{% endblock %}
+{% block content %}
+  <section class="co-card co-form-card">
+    <img class="co-form-logo" src="/static/img/logo.svg" alt="" width="56" height="56">
+    <h1 class="co-script co-form-title">{{ t('form.title', locale) }}</h1>
+    <hr class="co-heart-rule">
+    <p class="co-intro">{{ t('form.intro', locale) }}</p>
+
+    {% if banner %}
+      <p class="co-banner" role="alert">{{ t(banner, locale, days=settings.min_lead_days, max=settings.description_max) }}</p>
+    {% endif %}
+
+    <form method="post" action="/ajanlatkeres" novalidate>
+      <input type="hidden" name="form_token" value="{{ form_token }}">
+      {# Honeypot: invisible to humans, irresistible to naive bots. #}
+      <div class="co-hp" aria-hidden="true">
+        <label>Website
+          <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
+        </label>
+      </div>
+
+      <div class="co-form-grid">
+        <div>
+          <label for="name">{{ t('form.name', locale) }} <span class="co-req">*</span></label>
+          <input type="text" id="name" name="name" required autocomplete="name"
+                 placeholder="{{ t('form.name_ph', locale) }}"
+                 maxlength="{{ settings.name_max }}" value="{{ data.name if data else '' }}"
+                 {% if errors.get('name') %}aria-invalid="true"{% endif %}>
+          {% if errors.get('name') %}<small class="co-error">{{ t(errors['name'], locale) }}</small>{% endif %}
+        </div>
+        <div>
+          <label for="email">{{ t('form.email', locale) }} <span class="co-req">*</span></label>
+          <input type="email" id="email" name="email" required autocomplete="email"
+                 placeholder="{{ t('form.email_ph', locale) }}"
+                 maxlength="254" value="{{ data.email if data else '' }}"
+                 {% if errors.get('email') %}aria-invalid="true"{% endif %}>
+          {% if errors.get('email') %}<small class="co-error">{{ t(errors['email'], locale) }}</small>
+          {% else %}<small>{{ t('form.email_hint', locale) }}</small>{% endif %}
+        </div>
+        <div>
+          <label for="phone">{{ t('form.phone', locale) }} <small>({{ t('form.optional', locale) }})</small></label>
+          <input type="tel" id="phone" name="phone" autocomplete="tel"
+                 placeholder="{{ t('form.phone_ph', locale) }}"
+                 maxlength="{{ settings.phone_max }}" value="{{ data.phone if data else '' }}"
+                 {% if errors.get('phone') %}aria-invalid="true"{% endif %}>
+          {% if errors.get('phone') %}<small class="co-error">{{ t(errors['phone'], locale) }}</small>{% endif %}
+        </div>
+        <div>
+          <label for="due_date">{{ t('form.due_date', locale) }} <span class="co-req">*</span></label>
+          <input type="date" id="due_date" name="due_date" required min="{{ min_due }}"
+                 value="{{ data.due_date.isoformat() if data and data.due_date else '' }}"
+                 {% if errors.get('due_date') %}aria-invalid="true"{% endif %}>
+          {% if errors.get('due_date') %}<small class="co-error">{{ t(errors['due_date'], locale, days=settings.min_lead_days) }}</small>
+          {% else %}<small>{{ t('form.due_date_hint', locale, days=settings.min_lead_days) }}</small>{% endif %}
+        </div>
+        <div>
+          <label for="cake_type">{{ t('form.cake_type', locale) }} <span class="co-req">*</span></label>
+          <select id="cake_type" name="cake_type" required
+                  {% if errors.get('cake_type') %}aria-invalid="true"{% endif %}>
+            <option value="" {% if not data or not data.cake_type %}selected{% endif %} disabled>
+              {{ t('form.cake_type_ph', locale) }}
+            </option>
+            {% for ct in cake_types %}
+              <option value="{{ ct }}" {% if data and data.cake_type == ct %}selected{% endif %}>
+                {{ t('form.cake_type.' ~ ct, locale) }}
+              </option>
+            {% endfor %}
+          </select>
+          {% if errors.get('cake_type') %}<small class="co-error">{{ t(errors['cake_type'], locale) }}</small>{% endif %}
+        </div>
+        <div>
+          <label for="portions">{{ t('form.portions', locale) }} <small>({{ t('form.optional', locale) }})</small></label>
+          <input type="number" id="portions" name="portions" min="1" max="500" inputmode="numeric"
+                 placeholder="{{ t('form.portions_ph', locale) }}"
+                 value="{{ data.portions if data and data.portions else '' }}"
+                 {% if errors.get('portions') %}aria-invalid="true"{% endif %}>
+          {% if errors.get('portions') %}<small class="co-error">{{ t(errors['portions'], locale) }}</small>{% endif %}
+        </div>
+      </div>
+
+      <label for="description">{{ t('form.description', locale) }} <span class="co-req">*</span></label>
+      <textarea id="description" name="description" required rows="6"
+                placeholder="{{ t('form.description_ph', locale) }}"
+                maxlength="{{ settings.description_max }}" data-counter="chars"
+                {% if errors.get('description') %}aria-invalid="true"{% endif %}>{{ data.description if data else '' }}</textarea>
+      {% if errors.get('description') %}<small class="co-error">{{ t(errors['description'], locale, max=settings.description_max) }}</small>
+      {% else %}<small>{{ t('form.description_hint', locale, max=settings.description_max) }} <span id="chars"></span></small>{% endif %}
+
+      <label class="co-consent">
+        <input type="checkbox" name="consent" value="true"
+               {% if data and not errors.get('consent') %}checked{% endif %}>
+        <span>{{ t('form.consent', locale, link='<a href="/privacy">' ~ t('form.consent_link', locale) ~ '</a>') | safe }}</span>
+      </label>
+      {% if errors.get('consent') %}<small class="co-error">{{ t(errors['consent'], locale) }}</small>{% endif %}
+
+      {% if settings.turnstile_enabled %}
+        {# Cloudflare Turnstile slot — enabling it also requires widening the CSP. #}
+        <div class="cf-turnstile" data-sitekey="{{ settings.turnstile_site_key }}"></div>
+      {% endif %}
+
+      <button type="submit" class="co-submit">{{ t('form.submit', locale) }} ♡</button>
+    </form>
+  </section>
+{% endblock %}
+{% block scripts %}<script src="/static/js/form.js" defer></script>{% endblock %}

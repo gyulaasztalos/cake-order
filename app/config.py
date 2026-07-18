@@ -55,7 +55,8 @@ class Settings:
     smtp_password: str = os.getenv("SMTP_PASSWORD", "")
     # starttls (587) | tls (465) | plain (25, dev mail-catcher only)
     smtp_security: str = os.getenv("SMTP_SECURITY", "starttls")
-    mail_from: str = os.getenv("MAIL_FROM", "rendeles@anitatortai.hu")
+    # iCloud Mail only sends as the account address or a configured alias.
+    mail_from: str = os.getenv("MAIL_FROM", "info@anitatortai.hu")
     order_inbox: str = os.getenv("ORDER_INBOX", "info@anitatortai.hu")
 
     # --- phase 2: cake-pricing intake API (§6) ---

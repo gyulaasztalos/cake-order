@@ -1,65 +1,81 @@
-/* cake-order theme — "cukrász manufaktúra" look on top of Pico.css.
- *
- * Palette (PLANNING §design): icing white page, deep raspberry accents, blush
- * cards, cocoa text, pistachio for success notes. Signature element: the
- * scalloped piped-icing edge on the order card. No external fonts (strict CSP,
- * lean): Palatino serif stack for display, system sans for body.
+/* cake-order theme — Anita Tortái "cukrász manufaktúra", modeled on the
+ * owner's concept art: cream canvas, dusty-rose accents, calligraphic script
+ * display (Great Vibes, self-hosted), uppercase letter-spaced labels, pill
+ * buttons, scalloped icing edges, heart motifs. Strict CSP: no inline JS.
  */
 
 :root {
-  --co-icing: #FBF6F3;
-  --co-raspberry: #8E2649;
-  --co-raspberry-dark: #6E1C38;
-  --co-blush: #F5DEE5;
-  --co-cocoa: #3A2A2E;
-  --co-cocoa-soft: #7A5C64;
-  --co-pistachio: #6F8F63;
+  --co-cream: #FBF6F1;
+  --co-shell: #FFFFFF;
+  --co-blush: #F7E8E6;
+  --co-rose: #B76E79;
+  --co-rose-dark: #9A5560;
+  --co-cocoa: #4A3B3B;
+  --co-cocoa-soft: #8A7373;
+  --co-line: #EBD9D6;
 
-  --co-display: "Palatino", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --co-script: "Great Vibes", "Snell Roundhand", cursive;
+  --co-serif: "Palatino", "Palatino Linotype", "Book Antiqua", Georgia, serif;
 
-  /* Re-tune Pico to the palette. */
-  --pico-background-color: var(--co-icing);
-  --pico-color: var(--co-cocoa);
-  --pico-primary: var(--co-raspberry);
-  --pico-primary-background: var(--co-raspberry);
-  --pico-primary-border: var(--co-raspberry);
-  --pico-primary-hover: var(--co-raspberry-dark);
-  --pico-primary-hover-background: var(--co-raspberry-dark);
-  --pico-primary-underline: var(--co-raspberry);
-  --pico-primary-focus: color-mix(in srgb, var(--co-raspberry) 40%, transparent);
   --pico-border-radius: 10px;
 }
 
 /* Pico's [data-theme=light] block outranks :root vars — restate the palette
- * at the same specificity so the raspberry theme actually wins. */
+ * at the same specificity so the rose theme actually wins. */
 [data-theme="light"],
 :root:not([data-theme="dark"]) {
-  --pico-background-color: var(--co-icing);
+  --pico-background-color: var(--co-cream);
   --pico-color: var(--co-cocoa);
-  --pico-primary: var(--co-raspberry);
-  --pico-primary-background: var(--co-raspberry);
-  --pico-primary-border: var(--co-raspberry);
-  --pico-primary-hover: var(--co-raspberry-dark);
-  --pico-primary-hover-background: var(--co-raspberry-dark);
-  --pico-primary-hover-border: var(--co-raspberry-dark);
-  --pico-primary-underline: var(--co-raspberry);
-  --pico-primary-focus: color-mix(in srgb, var(--co-raspberry) 40%, transparent);
-  --pico-primary-inverse: #FFF7F4;
+  --pico-primary: var(--co-rose);
+  --pico-primary-background: var(--co-rose);
+  --pico-primary-border: var(--co-rose);
+  --pico-primary-hover: var(--co-rose-dark);
+  --pico-primary-hover-background: var(--co-rose-dark);
+  --pico-primary-hover-border: var(--co-rose-dark);
+  --pico-primary-underline: var(--co-rose);
+  --pico-primary-focus: color-mix(in srgb, var(--co-rose) 40%, transparent);
+  --pico-primary-inverse: #FFF9F6;
+  --pico-muted-color: var(--co-cocoa-soft);
 }
 
 body {
-  background: var(--co-icing);
+  background: var(--co-cream);
 }
 
-/* --- header ---------------------------------------------------------------- */
+.co-script {
+  font-family: var(--co-script);
+  font-weight: 400;
+  color: var(--co-rose);
+  line-height: 1.15;
+}
+
+/* --- header with scalloped icing bottom edge ------------------------------- */
 
 .co-header {
+  position: relative;
+  background: var(--co-shell);
+  padding-bottom: 14px;
+}
+
+.co-header::after {
+  /* icing scallops hanging off the header, as in the concept */
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 12px;
+  background:
+    radial-gradient(circle at 9px 0, var(--co-shell) 8px, transparent 9px) top left / 18px 12px repeat-x;
+  filter: drop-shadow(0 2px 2px rgb(183 110 121 / 0.12));
+}
+
+.co-header-inner {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 0.4rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  max-width: 46rem;
-  margin: 0 auto;
-  padding: 1rem;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .co-brand {
@@ -67,18 +83,77 @@ body {
   align-items: center;
   gap: 0.6rem;
   text-decoration: none;
-  color: var(--co-raspberry);
-}
-
-.co-brand-name {
-  font-family: var(--co-display);
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
 }
 
 .co-logo {
   border-radius: 50%;
+}
+
+.co-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.co-brand-name {
+  font-family: var(--co-script);
+  font-size: 1.9rem;
+  color: var(--co-rose);
+}
+
+.co-brand-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: lowercase;
+  color: var(--co-cocoa-soft);
+}
+
+.co-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.co-nav a {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--co-cocoa);
+}
+
+.co-nav a[aria-current="page"] {
+  color: var(--co-rose);
+  border-bottom: 2px solid var(--co-rose);
+}
+
+.co-nav a:hover {
+  color: var(--co-rose-dark);
+}
+
+.co-nav-cta {
+  background: var(--co-rose);
+  color: #FFF9F6 !important;
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+}
+
+.co-nav-cta:hover {
+  background: var(--co-rose-dark);
+}
+
+.co-header-side {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.co-social {
+  display: inline-flex;
+  padding: 0.3rem;
 }
 
 .co-lang {
@@ -87,97 +162,304 @@ body {
 }
 
 .co-lang summary {
-  font-size: 0.9rem;
-  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
 }
 
-/* --- layout ---------------------------------------------------------------- */
+/* --- layout ----------------------------------------------------------------- */
 
 .co-shell {
-  max-width: 46rem;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 0.5rem 1rem 2rem;
+  padding: 1rem 1rem 3rem;
 }
 
-.co-hero {
+.co-section {
+  margin: 3rem 0;
+}
+
+.co-section-title {
   text-align: center;
-  margin: 1.5rem 0 1rem;
+  font-family: var(--co-serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  color: var(--co-cocoa);
+  margin-bottom: 1.75rem;
 }
 
-.co-hero h1 {
-  font-family: var(--co-display);
-  font-size: clamp(2rem, 6vw, 2.8rem);
-  color: var(--co-raspberry);
-  margin-bottom: 0.3rem;
+.co-center {
+  text-align: center;
 }
 
-.co-tagline {
+.co-heart-rule {
+  border: 0;
+  height: 1rem;
+  margin: 0.4rem auto 1rem;
+  max-width: 14rem;
+  background: none;
+  text-align: center;
+}
+
+.co-heart-rule::after {
+  content: "— ♥ —";
+  color: var(--co-rose);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+}
+
+/* --- buttons ---------------------------------------------------------------- */
+
+.co-btn {
+  display: inline-block;
+  background: var(--co-rose);
+  color: #FFF9F6;
+  border: 1px solid var(--co-rose);
+  border-radius: 999px;
+  padding: 0.65rem 1.6rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.co-btn:hover,
+.co-btn:focus-visible {
+  background: var(--co-rose-dark);
+  color: #FFF9F6;
+  transform: translateY(-2px);
+}
+
+.co-btn-outline {
+  background: transparent;
+  color: var(--co-rose);
+}
+
+.co-btn-outline:hover,
+.co-btn-outline:focus-visible {
+  background: var(--co-blush);
+  color: var(--co-rose-dark);
+}
+
+/* --- hero ------------------------------------------------------------------- */
+
+.co-hero-band {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: center;
+  background: linear-gradient(120deg, var(--co-blush), #FBF1EE 60%, var(--co-cream));
+  border-radius: 18px;
+  padding: 2.5rem 2.25rem;
+  margin-top: 1.25rem;
+}
+
+.co-hero-copy h1 {
+  font-size: clamp(2.6rem, 6vw, 4rem);
+  margin-bottom: 0.2rem;
+}
+
+.co-hero-loc {
+  font-family: var(--co-serif);
+  font-size: 1.3rem;
+  color: var(--co-cocoa);
+  margin-bottom: 0.4rem;
+}
+
+.co-hero-band .co-heart-rule {
+  margin-left: 0;
+  text-align: left;
+}
+
+.co-hero-band .co-heart-rule::after {
+  content: "♥ ——";
+  letter-spacing: 0.2em;
+}
+
+.co-hero-body {
   color: var(--co-cocoa-soft);
-  font-size: 1.05rem;
+  max-width: 26rem;
 }
 
-/* --- gallery: round "cake tops" -------------------------------------------- */
-
-.co-gallery {
+.co-hero-ctas {
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1.5rem 0 2.25rem;
+  gap: 0.9rem;
+  flex-wrap: wrap;
 }
 
-.co-gallery img {
-  width: clamp(84px, 22vw, 130px);
-  height: clamp(84px, 22vw, 130px);
+.co-hero-img {
+  width: 100%;
+  max-width: 340px;
+  justify-self: center;
   border-radius: 50%;
-  border: 4px solid #fff;
-  box-shadow: 0 6px 18px rgb(142 38 73 / 0.15);
+  border: 8px solid var(--co-shell);
+  box-shadow: 0 14px 34px rgb(183 110 121 / 0.25);
+}
+
+/* --- why-me cards ------------------------------------------------------------ */
+
+.co-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.co-card-tile {
+  background: var(--co-shell);
+  border: 1px solid var(--co-line);
+  border-radius: 14px;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.co-card-tile h3 {
+  font-family: var(--co-serif);
+  font-size: 1.02rem;
+  margin: 0.75rem 0 0.4rem;
+}
+
+.co-card-tile p {
+  font-size: 0.88rem;
+  color: var(--co-cocoa-soft);
+  margin: 0;
+}
+
+/* --- gallery ----------------------------------------------------------------- */
+
+.co-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.co-gallery-grid img {
+  width: 100%;
+  aspect-ratio: 1;
   object-fit: cover;
+  border-radius: 14px;
+  border: 4px solid var(--co-shell);
+  box-shadow: 0 8px 20px rgb(183 110 121 / 0.16);
 }
 
-.co-gallery img:nth-child(2) {
-  transform: translateY(-8px);
+.co-gallery-large img {
+  border-radius: 16px;
 }
 
-/* --- the order card with its piped-icing scalloped edge -------------------- */
+/* --- steps band --------------------------------------------------------------- */
+
+.co-steps-band {
+  background: var(--co-shell);
+  border: 1px solid var(--co-line);
+  border-radius: 18px;
+  padding: 2.25rem 1.75rem;
+}
+
+.co-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  text-align: center;
+}
+
+.co-step-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 2px dashed var(--co-rose);
+  background: var(--co-cream);
+}
+
+.co-step h3 {
+  font-family: var(--co-serif);
+  font-size: 1rem;
+  margin: 0.7rem 0 0.35rem;
+}
+
+.co-step p {
+  font-size: 0.86rem;
+  color: var(--co-cocoa-soft);
+  margin: 0;
+}
+
+/* --- cards / form ------------------------------------------------------------- */
 
 .co-card {
   position: relative;
-  background: #fff;
-  border-radius: 14px;
-  padding: 2.5rem 1.75rem 1.75rem;
-  box-shadow: 0 10px 30px rgb(58 42 46 / 0.08);
-  margin-bottom: 2rem;
+  background: var(--co-shell);
+  border-radius: 16px;
+  border: 1px solid var(--co-line);
+  padding: 2rem 1.75rem;
+  box-shadow: 0 10px 30px rgb(74 59 59 / 0.07);
+  margin: 1.5rem auto;
 }
 
-.co-card::before {
-  /* Scallops "piped" along the top edge, like icing on a cake. */
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 18px;
-  border-radius: 14px 14px 0 0;
-  background:
-    radial-gradient(circle at 11px 0, var(--co-blush) 10px, transparent 11px) top left / 22px 18px repeat-x;
+.co-form-card {
+  max-width: 46rem;
+  text-align: left;
+}
+
+.co-form-logo {
+  display: block;
+  margin: 0 auto;
+}
+
+.co-form-title {
+  text-align: center;
+  font-size: 2.6rem;
+  margin: 0.25rem 0 0;
 }
 
 .co-intro {
+  text-align: center;
   color: var(--co-cocoa-soft);
   margin-bottom: 1.5rem;
 }
 
-/* --- form ------------------------------------------------------------------ */
+.co-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .co-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.co-form-card label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--co-cocoa);
+}
+
+.co-req {
+  color: var(--co-rose);
+}
+
+.co-form-card input::placeholder,
+.co-form-card textarea::placeholder {
+  color: #B9A8A8;
+}
 
 .co-error {
-  color: var(--co-raspberry);
+  color: var(--co-rose-dark);
   font-weight: 600;
 }
 
 .co-banner {
   background: var(--co-blush);
-  border-left: 4px solid var(--co-raspberry);
+  border-left: 4px solid var(--co-rose);
   border-radius: 6px;
   padding: 0.75rem 1rem;
-  color: var(--co-raspberry-dark);
+  color: var(--co-rose-dark);
 }
 
 .co-consent {
@@ -185,14 +467,22 @@ body {
   gap: 0.5rem;
   align-items: baseline;
   margin: 1rem 0;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  font-size: 0.95rem !important;
+  font-weight: 400 !important;
 }
 
 .co-submit {
-  width: 100%;
-  font-size: 1.1rem;
-  font-family: var(--co-display);
+  display: block;
+  margin: 0.5rem auto 0;
+  min-width: 60%;
   border-radius: 999px;
-  padding: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.85rem 2rem;
   transition: transform 0.15s ease;
 }
 
@@ -208,48 +498,115 @@ body {
   top: -9999px;
 }
 
-/* --- message + prose pages -------------------------------------------------- */
+/* --- message + prose pages ----------------------------------------------------- */
 
 .co-message {
+  max-width: 40rem;
   text-align: center;
 }
 
 .co-message h1 {
-  font-family: var(--co-display);
-  color: var(--co-raspberry);
+  font-family: var(--co-script);
+  font-size: 2.4rem;
+  color: var(--co-rose);
 }
 
 .co-message-icon {
   margin-bottom: 0.5rem;
 }
 
-.co-prose h1 {
-  font-family: var(--co-display);
-  color: var(--co-raspberry);
-  font-size: 1.6rem;
+.co-page-title {
+  text-align: center;
+  font-size: 2.8rem;
+}
+
+.co-prose {
+  max-width: 46rem;
 }
 
 .co-prose p {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
 }
 
-/* --- footer ----------------------------------------------------------------- */
+.co-about-img {
+  display: block;
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 0.75rem;
+  border: 6px solid var(--co-blush);
+}
+
+.co-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.co-contact-grid h3 {
+  font-family: var(--co-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--co-rose-dark);
+  margin-bottom: 0.3rem;
+}
+
+/* --- footer --------------------------------------------------------------------- */
 
 .co-footer {
-  text-align: center;
-  padding: 1rem 0 2rem;
-  color: var(--co-cocoa-soft);
+  background: var(--co-blush);
+  padding: 2.5rem 1rem 1.25rem;
+}
+
+.co-footer-grid {
+  max-width: 72rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1.5rem;
+}
+
+.co-footer h4 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--co-cocoa);
+  margin-bottom: 0.6rem;
+}
+
+.co-footer p {
   font-size: 0.9rem;
+  color: var(--co-cocoa-soft);
+  margin-bottom: 0.4rem;
 }
 
 .co-footer a {
+  color: var(--co-rose-dark);
+}
+
+.co-footer-brand {
+  font-size: 1.7rem;
+}
+
+.co-footer-legal {
+  text-align: center;
+  font-size: 0.78rem;
   color: var(--co-cocoa-soft);
+  margin: 1.75rem 0 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .co-btn,
   .co-submit {
     transition: none;
   }
+  .co-btn:hover,
+  .co-btn:focus-visible,
   .co-submit:hover,
   .co-submit:focus-visible {
     transform: none;

@@ -20,6 +20,16 @@
     <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ order.due_date | date }}</td>
   </tr>
   <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;">{{ t('email.field.cake_type', locale) }}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ t('form.cake_type.' ~ order.cake_type, locale) }}</td>
+  </tr>
+  {% if order.portions %}
+  <tr>
+    <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;">{{ t('email.field.portions', locale) }}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid #F5DEE5;">{{ order.portions }}</td>
+  </tr>
+  {% endif %}
+  <tr>
     <td style="padding:8px 12px;background:#F5DEE5;font-weight:bold;vertical-align:top;">{{ t('email.field.description', locale) }}</td>
     <td style="padding:8px 12px;white-space:pre-wrap;">{{ order.description }}</td>
   </tr>

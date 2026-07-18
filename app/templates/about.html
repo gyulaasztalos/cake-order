@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ t('about.title', locale) }} — Anita Tortái{% endblock %}
+{% block content %}
+  <section class="co-card co-prose co-about">
+    <img class="co-about-img" src="/static/img/gallery/cake-2.svg" alt="">
+    <h1 class="co-script co-page-title">{{ t('about.title', locale) }}</h1>
+    <hr class="co-heart-rule">
+    {# Placeholder bio — the owner reviews/replaces this copy with her own words. #}
+    <p>{{ t('about.body1', locale) }}</p>
+    <p>{{ t('about.body2', locale) }}</p>
+    <p class="co-center"><a class="co-btn" href="/ajanlatkeres">{{ t('about.cta', locale) }}</a></p>
+  </section>
+{% endblock %}

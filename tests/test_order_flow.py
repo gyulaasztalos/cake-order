@@ -20,6 +20,8 @@ def _form(**overrides) -> dict[str, str]:
         "email": "eva@example.com",
         "phone": "+36 30 123 4567",
         "due_date": VALID_DUE,
+        "cake_type": "birthday",
+        "portions": "16",
         "description": (
             "16 szeletes epres torta, vintage szív díszítéssel. Írás: „Boldog szülinapot”"
         ),
@@ -35,28 +37,28 @@ def _form(**overrides) -> dict[str, str]:
 
 
 def test_honeypot_gets_fake_success_and_sends_nothing(outbox):
-    r = client.post("/order", data=_form(website="http://spam.example"))
+    r = client.post("/ajanlatkeres", data=_form(website="http://spam.example"))
     assert r.status_code == 200
     assert outbox == []
 
 
 def test_instant_submit_is_rejected(outbox):
     # Default MIN_FILL_SECONDS=3; a token issued "now" means a sub-second fill.
-    r = client.post("/order", data=_form())
+    r = client.post("/ajanlatkeres", data=_form())
     assert r.status_code == 400
     assert outbox == []
 
 
 def test_forged_form_token_is_rejected(fast_form, outbox):
     forged = "12345.deadbeef"  # noqa: S105 — not a secret, an invalid signature
-    r = client.post("/order", data=_form(form_token=forged))
+    r = client.post("/ajanlatkeres", data=_form(form_token=forged))
     assert r.status_code == 400
     assert outbox == []
 
 
 def test_validation_errors_rerender_form(fast_form, outbox):
     r = client.post(
-        "/order",
+        "/ajanlatkeres",
         data=_form(name="", email="not-an-email", due_date="2020-01-01", description=""),
     )
     assert r.status_code == 422
@@ -65,7 +67,7 @@ def test_validation_errors_rerender_form(fast_form, outbox):
 
 def test_description_xss_is_escaped_on_rerender(fast_form):
     evil = "<script>alert(1)</script><img src=x onerror=alert(2)>"
-    r = client.post("/order", data=_form(email="broken", description=evil))
+    r = client.post("/ajanlatkeres", data=_form(email="broken", description=evil))
     assert r.status_code == 422
     assert "<script>alert(1)" not in r.text
     assert evil not in r.text  # autoescaped, but the visitor's text is preserved
@@ -73,7 +75,7 @@ def test_description_xss_is_escaped_on_rerender(fast_form):
 
 
 def test_consent_is_mandatory(fast_form):
-    r = client.post("/order", data=_form(consent=""))
+    r = client.post("/ajanlatkeres", data=_form(consent=""))
     assert r.status_code == 422
 
 
@@ -82,7 +84,7 @@ def test_consent_is_mandatory(fast_form):
 
 def _submit_ok(outbox) -> str:
     """Submit a valid order; return the raw verification token from the e-mail."""
-    r = client.post("/order", data=_form())
+    r = client.post("/ajanlatkeres", data=_form())
     assert r.status_code == 200, r.text
     assert len(outbox) == 1
     body = outbox[0].get_body(("plain",)).get_content()
@@ -130,7 +132,7 @@ def test_verify_with_unknown_token_404s(clean_db):
 
 def test_resubmit_same_email_refreshes_pending_order(clean_db, fast_form, outbox):
     token1 = _submit_ok(outbox)
-    r = client.post("/order", data=_form(description="Mégis csokitorta legyen!"))
+    r = client.post("/ajanlatkeres", data=_form(description="Mégis csokitorta legyen!"))
     assert r.status_code == 200
 
     from app.db import SessionLocal
@@ -151,9 +153,9 @@ def test_rate_limit_per_email(clean_db, fast_form, outbox, monkeypatch):
 
     monkeypatch.setattr(settings, "rate_max_per_email", 2)
     monkeypatch.setattr(settings, "rate_max_per_ip", 100)
-    assert client.post("/order", data=_form()).status_code == 200
-    assert client.post("/order", data=_form()).status_code == 200
-    assert client.post("/order", data=_form()).status_code == 429
+    assert client.post("/ajanlatkeres", data=_form()).status_code == 200
+    assert client.post("/ajanlatkeres", data=_form()).status_code == 200
+    assert client.post("/ajanlatkeres", data=_form()).status_code == 429
 
 
 def test_chef_mail_failure_keeps_token_valid(clean_db, fast_form, outbox, monkeypatch):
