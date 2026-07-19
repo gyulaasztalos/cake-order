@@ -22,6 +22,7 @@ from app.config import settings
 from app.db import engine
 from app.i18n import resolve_locale
 from app.routers import orders as orders_router
+from app.seo import structured_data_csp_hash
 
 app = FastAPI(
     title="cake-order", version=__version__, docs_url=None, redoc_url=None, openapi_url=None
@@ -32,12 +33,29 @@ Instrumentator().instrument(app).expose(app, endpoint="/metrics", include_in_sch
 STATIC_DIR = Path(__file__).parent / "static"
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+
+def _build_csp() -> str:
+    """Strict, self-only CSP. The inline JSON-LD block is allow-listed by its
+    sha256 hash (not 'unsafe-inline'). When cookieless analytics (Umami) is
+    configured, its origin — and only its origin — is added to
+    script-src/connect-src so the external tracker loads and can POST events;
+    everything else stays self."""
+    script_parts = ["'self'", f"'{structured_data_csp_hash()}'"]
+    connect_src = "'self'"
+    if origin := settings.analytics_origin:
+        script_parts.append(origin)
+        connect_src = f"'self' {origin}"
+    script_src = " ".join(script_parts)
+    return (
+        f"default-src 'self'; img-src 'self' data:; script-src {script_src}; "
+        f"connect-src {connect_src}; base-uri 'self'; form-action 'self'; "
+        "frame-ancestors 'none'"
+    )
+
+
 # Strict headers for a public app. HSTS is added by the TLS-terminating ingress.
 SECURITY_HEADERS = {
-    "Content-Security-Policy": (
-        "default-src 'self'; img-src 'self' data:; base-uri 'self'; "
-        "form-action 'self'; frame-ancestors 'none'"
-    ),
+    "Content-Security-Policy": _build_csp(),
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",

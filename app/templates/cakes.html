@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% block title %}{{ t('gallery.title', locale) }} — Anita Tortái{% endblock %}
+{% block title %}{{ t('seo.cakes.title', locale) }}{% endblock %}
+{% block meta_desc %}{{ t('seo.cakes.desc', locale) }}{% endblock %}
 {% block content %}
   <section class="co-section">
     <h1 class="co-script co-page-title">{{ t('gallery.title', locale) }}</h1>
     <hr class="co-heart-rule">
     {# Auto-listed from app/static/img/gallery/cakes/ (JPG/PNG/WebP) —
        the owner drops photos there; placeholders show while it is empty. #}
-    <div class="co-gallery-grid co-gallery-large">
-      {% for photo in photos %}
-        <img src="{{ photo }}" alt="" loading="lazy">
-      {% endfor %}
-    </div>
-    {% if photos[0].endswith('.svg') %}
+    {% set grid_class = 'co-gallery-large' %}
+    {% include "_gallery_grid.html" %}
+    {% if photos[0].placeholder %}
       <p class="co-center"><small>{{ t('gallery.placeholder_note', locale) }}</small></p>
     {% endif %}
     <p class="co-center"><a class="co-btn" href="/ajanlatkeres">{{ t('hero.cta', locale) }}</a></p>
   </section>
+  {% include "_lightbox.html" %}
 {% endblock %}
+{% block scripts %}<script src="/static/js/lightbox.js?v={{ version }}" defer></script>{% endblock %}

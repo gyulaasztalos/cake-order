@@ -4,6 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ t('app.title', locale) }}{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}{{ t('seo.default.desc', locale) }}{% endblock %}">
+  {# Canonical + hreflang so search engines index one URL per page and know the
+     language variants (chosen via the ?lang= switch, persisted in a cookie). #}
+  <link rel="canonical" href="{{ base_url }}{{ request.url.path }}">
+  {% for code in locales %}
+  <link rel="alternate" hreflang="{{ code }}" href="{{ base_url }}{{ request.url.path }}?lang={{ code }}">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ base_url }}{{ request.url.path }}">
+  {# Open Graph / social preview — title + description reuse the page's blocks. #}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Anita Tortái">
+  <meta property="og:title" content="{{ self.title() }}">
+  <meta property="og:description" content="{{ self.meta_desc() }}">
+  <meta property="og:url" content="{{ base_url }}{{ request.url.path }}">
+  <meta property="og:image" content="{{ base_url }}/static/img/logo-256.png">
+  <meta property="og:locale" content="{{ og_locale.get(locale, 'hu_HU') }}">
+  <meta name="twitter:card" content="summary">
+  {# JSON-LD LocalBusiness (Bakery). Inline, allow-listed by its sha256 in the
+     CSP — not executable JS, describes the business for rich results. #}
+  <script type="application/ld+json">{{ structured_data }}</script>
   {# ?v= cache-busting: browsers must refetch CSS/JS on every release, so a
      cached old stylesheet can never be paired with new markup. #}
   <link rel="stylesheet" href="/static/vendor/pico.min.css?v={{ version }}">
@@ -12,6 +32,9 @@
   <link rel="icon" href="/static/img/favicon-32.png" type="image/png">
   <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
   {# Strict CSP: no inline scripts, no inline event handlers — ever. #}
+  {# Cookieless, self-hosted analytics (Umami). External file, no inline JS;
+     its origin is allow-listed in the CSP only when configured. #}
+  {% if analytics_enabled %}<script defer src="{{ analytics_src }}" data-website-id="{{ analytics_website_id }}"></script>{% endif %}
 </head>
 <body>
   <header class="co-header">

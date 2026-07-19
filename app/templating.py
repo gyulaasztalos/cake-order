@@ -12,6 +12,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from app import __version__
 from app.config import settings
 from app.i18n import t
+from app.seo import structured_data_json
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -48,4 +49,13 @@ templates.env.globals["version"] = __version__
 templates.env.globals["year"] = dt.date.today().year
 # The public contact address, env-driven (same ORDER_INBOX the mailer sends to).
 templates.env.globals["contact_email"] = settings.order_inbox
+# Cookieless analytics (Umami): only rendered when both src + id are configured.
+templates.env.globals["analytics_enabled"] = settings.analytics_enabled
+templates.env.globals["analytics_src"] = settings.analytics_src
+templates.env.globals["analytics_website_id"] = settings.analytics_website_id
+# SEO: absolute base for canonical/OG URLs + BCP-47/OG locale maps for hreflang.
+templates.env.globals["base_url"] = settings.base_url
+templates.env.globals["og_locale"] = {"hu": "hu_HU", "en": "en_US", "de": "de_DE"}
+# JSON-LD LocalBusiness block (rendered inline; its CSP hash is allow-listed).
+templates.env.globals["structured_data"] = structured_data_json()
 templates.env.filters["date"] = format_date

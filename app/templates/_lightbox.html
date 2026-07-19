@@ -1,0 +1,13 @@
+{# Full-size photo viewer. Driven by /static/js/lightbox.js (external file — the
+   strict CSP forbids inline JS). Hidden until a gallery thumbnail is clicked.
+   The including page must load lightbox.js in its {% block scripts %}. #}
+<div class="co-lightbox" id="co-lightbox" hidden tabindex="-1" role="dialog" aria-modal="true"
+     aria-label="{{ t('gallery.viewer', locale) }}">
+  <button type="button" class="co-lightbox__close" data-lb-close
+          aria-label="{{ t('gallery.close', locale) }}">&times;</button>
+  <button type="button" class="co-lightbox__nav co-lightbox__prev" data-lb-prev
+          aria-label="{{ t('gallery.prev', locale) }}">&lsaquo;</button>
+  <img class="co-lightbox__img" id="co-lightbox-img" alt="">
+  <button type="button" class="co-lightbox__nav co-lightbox__next" data-lb-next
+          aria-label="{{ t('gallery.next', locale) }}">&rsaquo;</button>
+</div>

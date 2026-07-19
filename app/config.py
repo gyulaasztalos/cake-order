@@ -8,6 +8,7 @@ via env from the secret store; nothing sensitive lives here.
 from __future__ import annotations
 
 import os
+from urllib.parse import urlsplit
 
 
 class Settings:
@@ -34,7 +35,7 @@ class Settings:
     name_max: int = int(os.getenv("NAME_MAX", "120"))
     phone_max: int = int(os.getenv("PHONE_MAX", "32"))
     description_max: int = int(os.getenv("DESCRIPTION_MAX", "2000"))
-    min_lead_days: int = int(os.getenv("MIN_LEAD_DAYS", "3"))
+    min_lead_days: int = int(os.getenv("MIN_LEAD_DAYS", "7"))
 
     # --- verification (§3.2) ---
     token_ttl_hours: int = int(os.getenv("TOKEN_TTL_HOURS", "24"))
@@ -76,6 +77,31 @@ class Settings:
     # chef's "open the draft" link in the order e-mail (e.g.
     # https://torta.local.asztalos.net). Empty = no link.
     pricing_base_url: str = os.getenv("PRICING_BASE_URL", "").rstrip("/")
+
+    # --- self-hosted, cookieless visitor analytics (Umami) ---
+    # Enabled only when a script URL is configured. ANALYTICS_SRC is the full
+    # URL of the Umami tracker (e.g. https://stats.anitatortai.hu/script.js);
+    # ANALYTICS_WEBSITE_ID is the site UUID from the Umami dashboard. When set,
+    # the tracker's origin is added to the CSP script-src/connect-src so the
+    # otherwise self-only policy still loads it.
+    analytics_src: str = os.getenv("ANALYTICS_SRC", "").strip()
+    analytics_website_id: str = os.getenv("ANALYTICS_WEBSITE_ID", "").strip()
+
+    @property
+    def analytics_enabled(self) -> bool:
+        return bool(self.analytics_src and self.analytics_website_id)
+
+    @property
+    def analytics_origin(self) -> str:
+        """Scheme+host of the analytics script, for the CSP allow-list. Empty
+        if analytics is off or the URL is not absolute (never widens the CSP
+        to a bare path)."""
+        if not self.analytics_enabled:
+            return ""
+        parts = urlsplit(self.analytics_src)
+        if parts.scheme not in ("http", "https") or not parts.netloc:
+            return ""
+        return f"{parts.scheme}://{parts.netloc}"
 
 
 settings = Settings()

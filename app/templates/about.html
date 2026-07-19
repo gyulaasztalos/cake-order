@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}{{ t('about.title', locale) }} — Anita Tortái{% endblock %}
+{% block title %}{{ t('seo.about.title', locale) }}{% endblock %}
+{% block meta_desc %}{{ t('seo.about.desc', locale) }}{% endblock %}
 {% block content %}
   <section class="co-card co-prose co-about">
     <img class="co-about-img" src="/static/img/gallery/cake-2.svg" alt="">

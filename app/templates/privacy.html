@@ -17,8 +17,12 @@
         Verified orders are deleted from this system after 30 days; the order itself
         continues in our e-mail correspondence and offer records for as long as needed
         to fulfil it and to meet legal obligations.</p>
-      <p><strong>Cookies.</strong> A single cookie stores your language choice. No
-        analytics, no tracking, no third-party services.</p>
+      <p><strong>Cookies.</strong> A single cookie stores your language choice.
+        {% if analytics_enabled %}For anonymous visitor statistics we use Umami, a
+        self-hosted analytics tool running on our own infrastructure: it sets no
+        cookies, does not track you across sites, and stores no personal data —
+        only aggregate counts.{% else %}No analytics, no tracking, no third-party
+        services.{% endif %}</p>
       <p><strong>Recipients.</strong> Your data is not shared with third parties; it is
         processed on our own infrastructure and delivered to us by e-mail.</p>
       <p><strong>Your rights.</strong> You may request access, correction, or deletion
@@ -41,7 +45,11 @@
         und den Angebotsunterlagen so lange aufbewahrt, wie es für die Erfüllung und
         gesetzliche Pflichten erforderlich ist.</p>
       <p><strong>Cookies.</strong> Ein einziges Cookie speichert Ihre Sprachwahl.
-        Keine Analyse, kein Tracking, keine Drittanbieter.</p>
+        {% if analytics_enabled %}Für anonyme Besucherstatistiken nutzen wir Umami,
+        ein selbst gehostetes Analysewerkzeug auf unserer eigenen Infrastruktur: Es
+        setzt keine Cookies, verfolgt Sie nicht über Websites hinweg und speichert
+        keine personenbezogenen Daten — nur aggregierte Zählwerte.{% else %}Keine
+        Analyse, kein Tracking, keine Drittanbieter.{% endif %}</p>
       <p><strong>Empfänger.</strong> Ihre Daten werden nicht an Dritte weitergegeben;
         sie werden auf unserer eigenen Infrastruktur verarbeitet und uns per E-Mail
         zugestellt.</p>
@@ -62,8 +70,12 @@
         töröljük. A megerősített rendelések 30 nap után törlődnek ebből a rendszerből;
         maga a rendelés az e-mail levelezésünkben és az ajánlat-nyilvántartásban él
         tovább, ameddig a teljesítéshez és a jogszabályi kötelezettségekhez szükséges.</p>
-      <p><strong>Sütik.</strong> Egyetlen süti a nyelvválasztást tárolja. Nincs
-        analitika, nincs követés, nincsenek külső szolgáltatók.</p>
+      <p><strong>Sütik.</strong> Egyetlen süti a nyelvválasztást tárolja.
+        {% if analytics_enabled %}Anonim látogatottsági statisztikához az Umamit
+        használjuk, amely saját infrastruktúránkon fut: nem helyez el sütit, nem
+        követi Önt oldalak között, és nem tárol személyes adatot — csak összesített
+        számokat.{% else %}Nincs analitika, nincs követés, nincsenek külső
+        szolgáltatók.{% endif %}</p>
       <p><strong>Címzettek.</strong> Adatait harmadik félnek nem adjuk át; saját
         infrastruktúránkon dolgozzuk fel, és e-mailben jut el hozzánk.</p>
       <p><strong>Az Ön jogai.</strong> Bármikor kérhet hozzáférést, helyesbítést vagy

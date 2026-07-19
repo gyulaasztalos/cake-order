@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, Header, Request, Response
@@ -25,16 +26,42 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # The owner drops real JPG photos into these directories (no code change
-# needed); until then the galleries fall back to the placeholder SVGs.
+# needed); until then the galleries fall back to the placeholder SVGs. The
+# initContainer also writes a downscaled copy of each photo into a `thumbs/`
+# subdir — the grid shows the thumbnail, the lightbox loads the full image.
 _GALLERY_DIR = Path(__file__).parent.parent / "static" / "img" / "gallery"
 _PHOTO_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 _PLACEHOLDERS = [f"/static/img/gallery/cake-{i}.svg" for i in (1, 2, 3)]
 _GALLERY_TTL = 60.0  # seconds
-_gallery_cache: dict[str, tuple[float, list[str]]] = {}
 
 
-def _gallery(kind: str) -> list[str]:
-    """Photo URLs for a gallery, cached ~60 s.
+@dataclass(frozen=True)
+class Photo:
+    """A gallery entry: `thumb` for the grid, `full` for the lightbox. For the
+    empty-gallery placeholder SVGs both are the same URL and `placeholder` is
+    True, so the template can render them non-clickable (no lightbox)."""
+
+    thumb: str
+    full: str
+    placeholder: bool = False
+
+
+_PLACEHOLDER_PHOTOS = [Photo(thumb=u, full=u, placeholder=True) for u in _PLACEHOLDERS]
+_gallery_cache: dict[str, tuple[float, list[Photo]]] = {}
+_hero_cache: tuple[float, str | None] | None = None
+
+
+def _list_photos(kind: str) -> list[str]:
+    """Photo file names in a gallery dir, newest first (higher-numbered names
+    are later uploads). The `thumbs` subdir is skipped by the suffix filter."""
+    return sorted(
+        (p.name for p in (_GALLERY_DIR / kind).glob("*") if p.suffix.lower() in _PHOTO_SUFFIXES),
+        reverse=True,
+    )
+
+
+def _gallery(kind: str) -> list[Photo]:
+    """Photos for a gallery, cached ~60 s.
 
     In production the directory is an NFS mount; listing it on every request
     would let a hung NAS block the sync page handlers and exhaust the
@@ -47,21 +74,39 @@ def _gallery(kind: str) -> list[str]:
     if cached and now - cached[0] < _GALLERY_TTL:
         return cached[1]
     try:
-        # Newest first: filenames sort ascending, so reverse for descending
-        # (the owner's later uploads have higher-numbered names).
-        photos = sorted(
-            (
-                p.name
-                for p in (_GALLERY_DIR / kind).glob("*")
-                if p.suffix.lower() in _PHOTO_SUFFIXES
-            ),
-            reverse=True,
-        )
-        result = [f"/static/img/gallery/{kind}/{name}" for name in photos] or _PLACEHOLDERS
+        names = _list_photos(kind)
+        # Thumbnails the initContainer produced; if one is missing, fall back to
+        # the full image so the grid still shows something.
+        thumbs = {p.name for p in (_GALLERY_DIR / kind / "thumbs").glob("*")}
+        base = f"/static/img/gallery/{kind}"
+        result = [
+            Photo(
+                thumb=f"{base}/thumbs/{name}" if name in thumbs else f"{base}/{name}",
+                full=f"{base}/{name}",
+            )
+            for name in names
+        ] or _PLACEHOLDER_PHOTOS
     except OSError:
         logger.exception("gallery listing failed for %s", kind)
-        return cached[1] if cached else _PLACEHOLDERS
+        return cached[1] if cached else _PLACEHOLDER_PHOTOS
     _gallery_cache[kind] = (now, result)
+    return result
+
+
+def _hero_image() -> str | None:
+    """Newest photo from the dedicated `hero/` dir for the faded homepage
+    backdrop, or None (the template then shows the SVG). Cached like _gallery."""
+    global _hero_cache
+    now = time.monotonic()
+    if _hero_cache and now - _hero_cache[0] < _GALLERY_TTL:
+        return _hero_cache[1]
+    try:
+        names = _list_photos("hero")
+        result = f"/static/img/gallery/hero/{names[0]}" if names else None
+    except OSError:
+        logger.exception("hero listing failed")
+        return _hero_cache[1] if _hero_cache else None
+    _hero_cache = (now, result)
     return result
 
 
@@ -97,7 +142,9 @@ def _form_ctx(request: Request, **extra: object) -> dict[str, object]:
 @router.get("/")
 def index(request: Request) -> Response:
     return templates.TemplateResponse(
-        request, "index.html", _ctx(request, photos=_gallery("cakes")[:3])
+        request,
+        "index.html",
+        _ctx(request, photos=_gallery("cakes")[:3], hero_image=_hero_image()),
     )
 
 
@@ -128,6 +175,51 @@ def contact(request: Request) -> Response:
 @router.get("/privacy")
 def privacy(request: Request) -> Response:
     return templates.TemplateResponse(request, "privacy.html", _ctx(request))
+
+
+# --- SEO: robots + sitemap ----------------------------------------------------
+
+# Public, indexable pages (the token-bearing /verify URLs are deliberately out).
+_SITEMAP_PATHS = [
+    "/",
+    "/tortak",
+    "/desszertek",
+    "/rolam",
+    "/kapcsolat",
+    "/ajanlatkeres",
+    "/privacy",
+]
+
+
+@router.get("/robots.txt", include_in_schema=False)
+def robots() -> Response:
+    lines = ["User-agent: *", "Allow: /", "Disallow: /verify/"]
+    if settings.base_url:
+        lines.append(f"Sitemap: {settings.base_url}/sitemap.xml")
+    return Response("\n".join(lines) + "\n", media_type="text/plain")
+
+
+@router.get("/sitemap.xml", include_in_schema=False)
+def sitemap() -> Response:
+    # One <url> per public page, each with hreflang alternates for the ?lang=
+    # variants so search engines serve the right language.
+    locales = list(enabled_locale_names())
+    entries: list[str] = []
+    for path in _SITEMAP_PATHS:
+        loc = f"{settings.base_url}{path}"
+        alts = "".join(
+            f'<xhtml:link rel="alternate" hreflang="{code}" '
+            f'href="{settings.base_url}{path}?lang={code}"/>'
+            for code in locales
+        )
+        alts += f'<xhtml:link rel="alternate" hreflang="x-default" href="{loc}"/>'
+        entries.append(f"<url><loc>{loc}</loc>{alts}</url>")
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+        'xmlns:xhtml="http://www.w3.org/1999/xhtml">' + "".join(entries) + "</urlset>"
+    )
+    return Response(xml, media_type="application/xml")
 
 
 # --- offer request flow -------------------------------------------------------

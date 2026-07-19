@@ -1,0 +1,15 @@
+{# Clickable gallery grid. Real photos are buttons that open the lightbox
+   (data-full = full-size URL); placeholder SVGs render as plain, non-clickable
+   images. `grid_class` (optional) adds a size modifier. #}
+<div class="co-gallery-grid {{ grid_class | default('') }}" data-lightbox>
+  {% for photo in photos %}
+    {% if photo.placeholder %}
+      <img src="{{ photo.thumb }}" alt="" loading="lazy">
+    {% else %}
+      <button type="button" class="co-gallery-item" data-full="{{ photo.full }}"
+              aria-label="{{ t('gallery.view', locale) }}">
+        <img src="{{ photo.thumb }}" alt="" loading="lazy">
+      </button>
+    {% endif %}
+  {% endfor %}
+</div>

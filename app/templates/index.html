@@ -1,6 +1,12 @@
 {% extends "base.html" %}
+{% block title %}{{ t('seo.home.title', locale) }}{% endblock %}
+{% block meta_desc %}{{ t('seo.home.desc', locale) }}{% endblock %}
 {% block content %}
   <section class="co-hero-band">
+    {# Half-faded backdrop: the newest photo from the hero/ dir, or the SVG when
+       none is uploaded. Decorative, so aria-hidden + empty alt. #}
+    <img class="co-hero-bg" src="{{ hero_image or '/static/img/gallery/cake-2.svg' }}"
+         alt="" aria-hidden="true">
     <div class="co-hero-copy">
       <h1 class="co-script">{{ t('hero.title', locale) }}</h1>
       <p class="co-hero-loc">{{ t('hero.location', locale) }}</p>
@@ -11,7 +17,6 @@
         <a class="co-btn co-btn-outline" href="/tortak">{{ t('hero.cta_gallery', locale) }}</a>
       </p>
     </div>
-    <img class="co-hero-img" src="/static/img/gallery/cake-2.svg" alt="">
   </section>
 
   <section class="co-section">
@@ -29,11 +34,7 @@
 
   <section class="co-section">
     <h2 class="co-section-title">{{ t('gallery.preview_title', locale) }}</h2>
-    <div class="co-gallery-grid">
-      {% for photo in photos %}
-        <img src="{{ photo }}" alt="" loading="lazy">
-      {% endfor %}
-    </div>
+    {% include "_gallery_grid.html" %}
     <p class="co-center"><a class="co-btn co-btn-outline" href="/tortak">{{ t('gallery.all', locale) }}</a></p>
   </section>
 
@@ -49,4 +50,7 @@
       {% endfor %}
     </div>
   </section>
+
+  {% include "_lightbox.html" %}
 {% endblock %}
+{% block scripts %}<script src="/static/js/lightbox.js?v={{ version }}" defer></script>{% endblock %}

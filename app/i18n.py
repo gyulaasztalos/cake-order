@@ -18,6 +18,40 @@ from app.config import settings
 HU: dict[str, str] = {
     "app.title": "Anita Tortái — Ajánlatkérés",
     "app.tagline": "szeretetből sütve",
+    # SEO meta (titles + descriptions) — Hungarian keywords are what matter.
+    "seo.default.desc": (
+        "Anita Tortái — kézműves torta manufaktúra Szentendrén. Egyedi, kézzel "
+        "készített születésnapi és esküvői torták rendelésre."
+    ),
+    "seo.home.title": "Anita Tortái — Egyedi kézműves torták | Szentendre",
+    "seo.home.desc": (
+        "Egyedi, kézzel készített torták Szentendrén — születésnapi, esküvői és "
+        "alkalmi torták. Kérj személyre szabott ajánlatot a torta manufaktúrától!"
+    ),
+    "seo.cakes.title": "Torták — egyedi kézműves torták | Anita Tortái Szentendre",
+    "seo.cakes.desc": (
+        "Nézd meg korábbi egyedi tortáimat: születésnapi, esküvői és alkalmi "
+        "torták. Kézzel készített torta manufaktúra Szentendrén."
+    ),
+    "seo.desserts.title": "Desszertek — kézműves édességek | Anita Tortái",
+    "seo.desserts.desc": (
+        "Kézzel készített desszertek és édességek Szentendréről. Rendelj egyedi "
+        "desszertet a következő alkalmadra."
+    ),
+    "seo.about.title": "Rólam — Anita Tortái torta manufaktúra | Szentendre",
+    "seo.about.desc": (
+        "Ismerd meg Anitát és a kézműves torta manufaktúrát Szentendrén. Egyedi, "
+        "szeretettel készített torták minden alkalomra."
+    ),
+    "seo.contact.title": "Kapcsolat — Anita Tortái | Szentendre",
+    "seo.contact.desc": (
+        "Vedd fel velem a kapcsolatot egyedi torta rendeléséhez Szentendrén és környékén."
+    ),
+    "seo.offer.title": "Ajánlatkérés — egyedi torta rendelése | Anita Tortái",
+    "seo.offer.desc": (
+        "Kérj ajánlatot egyedi, kézzel készített tortára — születésnapi, esküvői "
+        "vagy alkalmi torta Szentendrén."
+    ),
     "app.language": "Nyelv",
     # nav + footer
     "nav.home": "Főoldal",
@@ -64,6 +98,11 @@ HU: dict[str, str] = {
     "gallery.all": "Összes torta megnézése",
     "gallery.desserts_title": "Desszertek",
     "gallery.placeholder_note": "A képek hamarosan érkeznek — addig is kérj bátran ajánlatot!",
+    "gallery.view": "Kép megnyitása",
+    "gallery.viewer": "Képnézegető",
+    "gallery.close": "Bezárás",
+    "gallery.prev": "Előző kép",
+    "gallery.next": "Következő kép",
     # about
     "about.title": "Rólam",
     "about.body1": (
@@ -213,6 +252,39 @@ HU: dict[str, str] = {
 EN: dict[str, str] = {
     "app.title": "Anita Tortái — Request an Offer",
     "app.tagline": "baked with love",
+    "seo.default.desc": (
+        "Anita Tortái — artisan cake workshop in Szentendre. Custom, handmade "
+        "birthday and wedding cakes made to order."
+    ),
+    "seo.home.title": "Anita Tortái — Custom handmade cakes | Szentendre",
+    "seo.home.desc": (
+        "Custom, handmade cakes in Szentendre — birthday, wedding and occasion "
+        "cakes. Request a personalised offer from the cake workshop!"
+    ),
+    "seo.cakes.title": "Cakes — custom handmade cakes | Anita Tortái Szentendre",
+    "seo.cakes.desc": (
+        "See my previous custom cakes: birthday, wedding and occasion cakes. "
+        "Handmade cake workshop in Szentendre."
+    ),
+    "seo.desserts.title": "Desserts — handmade sweets | Anita Tortái",
+    "seo.desserts.desc": (
+        "Handmade desserts and sweets from Szentendre. Order a custom dessert "
+        "for your next occasion."
+    ),
+    "seo.about.title": "About — Anita Tortái cake workshop | Szentendre",
+    "seo.about.desc": (
+        "Meet Anita and the artisan cake workshop in Szentendre. Custom cakes "
+        "made with love for every occasion."
+    ),
+    "seo.contact.title": "Contact — Anita Tortái | Szentendre",
+    "seo.contact.desc": (
+        "Get in touch to order a custom cake in Szentendre and the surrounding area."
+    ),
+    "seo.offer.title": "Request an offer — order a custom cake | Anita Tortái",
+    "seo.offer.desc": (
+        "Request an offer for a custom, handmade cake — birthday, wedding or "
+        "occasion cake in Szentendre."
+    ),
     "app.language": "Language",
     "nav.home": "Home",
     "nav.cakes": "Cakes",
@@ -256,6 +328,11 @@ EN: dict[str, str] = {
     "gallery.placeholder_note": (
         "Photos are coming soon — meanwhile, feel free to request an offer!"
     ),
+    "gallery.view": "Open photo",
+    "gallery.viewer": "Photo viewer",
+    "gallery.close": "Close",
+    "gallery.prev": "Previous photo",
+    "gallery.next": "Next photo",
     "about.title": "About me",
     "about.body1": (
         "Hi! I'm Anita, the founder of the Anita Tortái artisan cake workshop. "
@@ -392,6 +469,41 @@ EN: dict[str, str] = {
 DE: dict[str, str] = {
     "app.title": "Anita Tortái — Angebotsanfrage",
     "app.tagline": "mit Liebe gebacken",
+    "seo.default.desc": (
+        "Anita Tortái — handwerkliche Tortenmanufaktur in Szentendre. "
+        "Individuelle, handgefertigte Geburtstags- und Hochzeitstorten auf "
+        "Bestellung."
+    ),
+    "seo.home.title": "Anita Tortái — Individuelle handgemachte Torten | Szentendre",
+    "seo.home.desc": (
+        "Individuelle, handgefertigte Torten in Szentendre — Geburtstags-, "
+        "Hochzeits- und Anlasstorten. Fordern Sie ein persönliches Angebot an!"
+    ),
+    "seo.cakes.title": "Torten — individuelle handgemachte Torten | Anita Tortái",
+    "seo.cakes.desc": (
+        "Sehen Sie meine bisherigen individuellen Torten: Geburtstags-, "
+        "Hochzeits- und Anlasstorten. Tortenmanufaktur in Szentendre."
+    ),
+    "seo.desserts.title": "Desserts — handgemachte Süßigkeiten | Anita Tortái",
+    "seo.desserts.desc": (
+        "Handgefertigte Desserts und Süßigkeiten aus Szentendre. Bestellen Sie "
+        "ein individuelles Dessert für Ihren nächsten Anlass."
+    ),
+    "seo.about.title": "Über mich — Anita Tortái Tortenmanufaktur | Szentendre",
+    "seo.about.desc": (
+        "Lernen Sie Anita und die handwerkliche Tortenmanufaktur in Szentendre "
+        "kennen. Individuelle Torten für jeden Anlass."
+    ),
+    "seo.contact.title": "Kontakt — Anita Tortái | Szentendre",
+    "seo.contact.desc": (
+        "Nehmen Sie Kontakt auf, um eine individuelle Torte in Szentendre und "
+        "Umgebung zu bestellen."
+    ),
+    "seo.offer.title": "Angebot anfragen — individuelle Torte bestellen | Anita Tortái",
+    "seo.offer.desc": (
+        "Fordern Sie ein Angebot für eine individuelle, handgefertigte Torte an "
+        "— Geburtstags-, Hochzeits- oder Anlasstorte in Szentendre."
+    ),
     "app.language": "Sprache",
     "nav.home": "Startseite",
     "nav.cakes": "Torten",
@@ -435,6 +547,11 @@ DE: dict[str, str] = {
     "gallery.placeholder_note": (
         "Fotos folgen in Kürze — fragen Sie in der Zwischenzeit gerne ein Angebot an!"
     ),
+    "gallery.view": "Foto öffnen",
+    "gallery.viewer": "Fotoanzeige",
+    "gallery.close": "Schließen",
+    "gallery.prev": "Vorheriges Foto",
+    "gallery.next": "Nächstes Foto",
     "about.title": "Über mich",
     "about.body1": (
         "Hallo! Ich bin Anita, Gründerin der Tortenmanufaktur Anita Tortái. "
