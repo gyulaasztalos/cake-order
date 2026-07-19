@@ -47,8 +47,15 @@ def _gallery(kind: str) -> list[str]:
     if cached and now - cached[0] < _GALLERY_TTL:
         return cached[1]
     try:
+        # Newest first: filenames sort ascending, so reverse for descending
+        # (the owner's later uploads have higher-numbered names).
         photos = sorted(
-            p.name for p in (_GALLERY_DIR / kind).glob("*") if p.suffix.lower() in _PHOTO_SUFFIXES
+            (
+                p.name
+                for p in (_GALLERY_DIR / kind).glob("*")
+                if p.suffix.lower() in _PHOTO_SUFFIXES
+            ),
+            reverse=True,
         )
         result = [f"/static/img/gallery/{kind}/{name}" for name in photos] or _PLACEHOLDERS
     except OSError:

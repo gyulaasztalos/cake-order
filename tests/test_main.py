@@ -26,9 +26,12 @@ def test_lang_switch_keeps_normal_path():
     assert r.headers["location"] == "/rolam"
 
 
-def test_metrics_blocked_on_public_host(monkeypatch):
-    monkeypatch.setattr(settings, "public_host", "order.anitatortai.hu")
-    assert client.get("/metrics", headers={"host": "order.anitatortai.hu"}).status_code == 404
+def test_metrics_blocked_on_public_hosts(monkeypatch):
+    monkeypatch.setattr(
+        settings, "public_hosts", frozenset({"anitatortai.hu", "www.anitatortai.hu"})
+    )
+    assert client.get("/metrics", headers={"host": "anitatortai.hu"}).status_code == 404
+    assert client.get("/metrics", headers={"host": "www.anitatortai.hu:443"}).status_code == 404
     # In-cluster scrapers (service name / IP host) still get metrics.
     ok = client.get("/metrics", headers={"host": "cake-order.cake-order.svc.cluster.local"})
     assert ok.status_code == 200

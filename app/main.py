@@ -56,8 +56,9 @@ def _safe_redirect_path(raw_path: str) -> str:
 @app.middleware("http")
 async def security_headers(request: Request, call_next) -> Response:
     # /metrics is ops-only: reachable in-cluster (Prometheus, internal Traefik)
-    # but 404 on the public host so the tunnel doesn't expose it.
-    if request.url.path == "/metrics" and request.headers.get("host", "") == settings.public_host:
+    # but 404 on any public host so the tunnel doesn't expose it.
+    host = request.headers.get("host", "").split(":", 1)[0].lower()
+    if request.url.path == "/metrics" and host in settings.public_hosts:
         response: Response = JSONResponse({"detail": "Not Found"}, status_code=404)
     # ?lang=xx on any GET page → persist the choice, redirect to a clean URL.
     elif request.method == "GET" and (lang := request.query_params.get("lang")) is not None:

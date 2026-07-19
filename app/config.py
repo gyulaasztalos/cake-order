@@ -12,12 +12,17 @@ import os
 
 class Settings:
     app_env: str = os.getenv("APP_ENV", "prod")
-    # Public base URL — verification links are built from this.
+    # Public base URL — verification links are built from this. Canonical apex;
+    # a www→apex redirect at the edge keeps links consistent.
     base_url: str = os.getenv("BASE_URL", "http://localhost:8000").rstrip("/")
-    # Public Host header (the tunnel hostname). /metrics is 404'd for it so the
-    # public edge can't scrape Prometheus data; in-cluster scrapers use the
-    # service name/IP and are unaffected.
-    public_host: str = os.getenv("PUBLIC_HOST", "order.anitatortai.hu")
+    # Public Host headers (the tunnel hostnames). /metrics is 404'd for these so
+    # the public edge can't scrape Prometheus data; in-cluster scrapers use the
+    # service name/IP and are unaffected. Comma-separated; apex + www.
+    public_hosts: frozenset[str] = frozenset(
+        h.strip().lower()
+        for h in os.getenv("PUBLIC_HOSTS", "anitatortai.hu,www.anitatortai.hu").split(",")
+        if h.strip()
+    )
     # Default UI language; hu/en/de catalogs ship from day one, but only the
     # locales listed here are selectable (de is built yet disabled at launch).
     default_locale: str = os.getenv("APP_LOCALE", "hu")
