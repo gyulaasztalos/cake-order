@@ -2,6 +2,8 @@ name: CI
 
 # Public-facing app → stricter than the internal siblings: lint, types, tests,
 # and security scans run on EVERY push and PR, not only on release tags.
+# Runs against a real Postgres so the DB-backed flow tests actually execute
+# (they self-skip without DATABASE_URL).
 
 permissions:
   contents: read
@@ -14,6 +16,25 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: cake
+          POSTGRES_PASSWORD: devpass
+          POSTGRES_DB: cake-order
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cake"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+psycopg://cake:devpass@localhost:5432/cake-order
+
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -34,6 +55,9 @@ jobs:
 
       - name: Types (mypy)
         run: uv run mypy
+
+      - name: Migrate (alembic)
+        run: uv run alembic upgrade head
 
       - name: Tests (pytest)
         run: uv run pytest
