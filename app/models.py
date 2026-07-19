@@ -19,6 +19,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -41,6 +42,13 @@ class Order(Base):
         CheckConstraint("char_length(description) <= 4000", name="ck_description_len"),
         UniqueConstraint("token_hash", name="uq_orders_token_hash"),
         Index("ix_orders_status_entry", "status", "entry_date"),
+        # At most one pending order per e-mail (dedupe backstop, migration 0004).
+        Index(
+            "uq_orders_pending_email",
+            "email",
+            unique=True,
+            postgresql_where=text("status = 'pending'"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)

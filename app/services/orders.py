@@ -12,6 +12,7 @@ import hashlib
 import re
 import secrets
 from dataclasses import dataclass, field
+from zoneinfo import ZoneInfo
 
 from email_validator import EmailNotValidError, validate_email
 from sqlalchemy import select
@@ -24,6 +25,23 @@ from app.models import Order
 # Permissive on purpose: digits, spaces, +, -, /, parentheses. It is a contact
 # convenience, not an identifier.
 _PHONE_RE = re.compile(r"^[0-9+\-/() ]{6,32}$")
+# Any C0/C1 control char (incl. CR/LF). The name reaches an e-mail Subject
+# header, so a newline would break header construction — reject at the edge.
+_CONTROL_RE = re.compile(r"[\x00-\x1f\x7f-\x9f]")
+
+# Lead-time is a human deadline, so anchor it to the chef's wall clock, not the
+# container's UTC — otherwise a submit just after Budapest midnight is off by a day.
+_LOCAL_TZ = ZoneInfo("Europe/Budapest")
+
+
+def local_today() -> dt.date:
+    return dt.datetime.now(_LOCAL_TZ).date()
+
+
+def earliest_due_date() -> dt.date:
+    """Soonest date the form accepts. Single source for the input `min=` and
+    the server-side check, so the two can never drift."""
+    return local_today() + dt.timedelta(days=settings.min_lead_days)
 
 
 @dataclass
@@ -36,6 +54,7 @@ class OrderInput:
     flavor: str = ""
     portions: int | None = None
     description: str = ""
+    consent: bool = False
     errors: dict[str, str] = field(default_factory=dict)  # field -> i18n key
 
 
@@ -58,8 +77,9 @@ def validate(
         # Optional; anything outside the fixed list (tampering) is dropped.
         flavor=flavor.strip() if flavor.strip() in FLAVORS else "",
         description=description.strip(),
+        consent=consent,
     )
-    if not data.name:
+    if not data.name or _CONTROL_RE.search(data.name):
         data.errors["name"] = "error.name_required"
 
     try:
@@ -75,8 +95,7 @@ def validate(
     except ValueError:
         data.errors["due_date"] = "error.due_date_invalid"
     else:
-        earliest = dt.date.today() + dt.timedelta(days=settings.min_lead_days)
-        if data.due_date < earliest:
+        if data.due_date < earliest_due_date():
             data.errors["due_date"] = "error.due_date_too_soon"
 
     if data.cake_type not in CAKE_TYPES:
@@ -113,9 +132,13 @@ def create_or_refresh_pending(session: Session, data: OrderInput, locale: str) -
     raw, digest = _new_token()
     expires = now + dt.timedelta(hours=settings.token_ttl_hours)
 
-    order = session.execute(
-        select(Order).where(Order.email == data.email, Order.status == "pending")
-    ).scalar_one_or_none()
+    # .first() (not scalar_one_or_none): a rare concurrent double-submit can
+    # briefly leave two pending rows for one e-mail (the partial unique index in
+    # migration 0004 blocks the durable case) — refresh the oldest rather than
+    # crashing every future submit with MultipleResultsFound.
+    order = session.scalars(
+        select(Order).where(Order.email == data.email, Order.status == "pending").order_by(Order.id)
+    ).first()
     if order is None:
         order = Order(
             name=data.name,
@@ -149,11 +172,20 @@ def create_or_refresh_pending(session: Session, data: OrderInput, locale: str) -
 
 
 def find_by_token(session: Session, raw_token: str) -> tuple[str, Order | None]:
-    """Resolve a verification link: ('ok'|'already'|'invalid', order)."""
+    """Resolve a verification link: ('ok'|'already'|'invalid', order).
+
+    Locks the matched row FOR UPDATE so concurrent hits on the same link (a
+    real click racing an e-mail scanner's prefetch) serialize: the first
+    confirms and sends, the rest block then read 'confirmed' → 'already'.
+    Without the lock both would send the chef mail and create a duplicate
+    cake-pricing draft (the intake POST is not idempotent).
+    """
     if not raw_token or len(raw_token) > 64:
         return "invalid", None
     digest = hashlib.sha256(raw_token.encode()).hexdigest()
-    order = session.execute(select(Order).where(Order.token_hash == digest)).scalar_one_or_none()
+    order = session.scalars(
+        select(Order).where(Order.token_hash == digest).with_for_update()
+    ).first()
     if order is None:
         return "invalid", None
     if order.status in ("confirmed", "forwarded"):

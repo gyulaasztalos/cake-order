@@ -7,8 +7,8 @@ banner. All visitor-facing strings go through t() in the resolved locale.
 
 from __future__ import annotations
 
-import datetime as dt
 import logging
+import time
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, Header, Request, Response
@@ -29,13 +29,33 @@ router = APIRouter()
 _GALLERY_DIR = Path(__file__).parent.parent / "static" / "img" / "gallery"
 _PHOTO_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp"}
 _PLACEHOLDERS = [f"/static/img/gallery/cake-{i}.svg" for i in (1, 2, 3)]
+_GALLERY_TTL = 60.0  # seconds
+_gallery_cache: dict[str, tuple[float, list[str]]] = {}
 
 
 def _gallery(kind: str) -> list[str]:
-    photos = sorted(
-        p.name for p in (_GALLERY_DIR / kind).glob("*") if p.suffix.lower() in _PHOTO_SUFFIXES
-    )
-    return [f"/static/img/gallery/{kind}/{name}" for name in photos] or _PLACEHOLDERS
+    """Photo URLs for a gallery, cached ~60 s.
+
+    In production the directory is an NFS mount; listing it on every request
+    would let a hung NAS block the sync page handlers and exhaust the
+    threadpool (taking down the order form too). The cache touches the mount
+    at most once per TTL, and on any listing error serves the last good result
+    (or placeholders) so pages keep rendering through a NAS outage.
+    """
+    now = time.monotonic()
+    cached = _gallery_cache.get(kind)
+    if cached and now - cached[0] < _GALLERY_TTL:
+        return cached[1]
+    try:
+        photos = sorted(
+            p.name for p in (_GALLERY_DIR / kind).glob("*") if p.suffix.lower() in _PHOTO_SUFFIXES
+        )
+        result = [f"/static/img/gallery/{kind}/{name}" for name in photos] or _PLACEHOLDERS
+    except OSError:
+        logger.exception("gallery listing failed for %s", kind)
+        return cached[1] if cached else _PLACEHOLDERS
+    _gallery_cache[kind] = (now, result)
+    return result
 
 
 def _locale(request: Request) -> str:
@@ -52,10 +72,9 @@ def _ctx(request: Request, **extra: object) -> dict[str, object]:
 
 
 def _form_ctx(request: Request, **extra: object) -> dict[str, object]:
-    min_due = dt.date.today() + dt.timedelta(days=settings.min_lead_days)
     ctx = _ctx(
         request,
-        min_due=min_due.isoformat(),
+        min_due=orders.earliest_due_date().isoformat(),
         cake_types=CAKE_TYPES,
         flavors=FLAVORS,
         form_token=issue_form_token(),
@@ -152,22 +171,29 @@ def submit_offer(
         logger.info("honeypot hit dropped")
         return submitted_page(email)
 
-    # 2) Signed render-timestamp: too fast (bot) or stale/forged.
+    # 2) Signed render-timestamp: too fast (bot) or stale/forged. Pass the
+    # validated data (errors included) so the re-render reflects what the user
+    # actually entered — never silently re-tick an unchecked consent box.
     if not check_form_token(form_token):
-        return form_page(data=validated(), banner="error.too_fast", status_code=400)
+        bad = validated()
+        return form_page(data=bad, errors=bad.errors, banner="error.too_fast", status_code=400)
 
     # 3) Field validation.
     data = validated()
     if data.errors:
         return form_page(data=data, errors=data.errors, status_code=422)
 
-    # 4) Rate limits (per IP, then per e-mail address).
+    # 4) Rate limits (per IP, then per e-mail address). Commit the recorded
+    # events immediately: a later mailer rollback must NOT erase them, or the
+    # counters could never trip during an SMTP outage — exactly when they matter.
     ip = ratelimit.client_ip(x_forwarded_for, request.client.host if request.client else None)
-    if not ratelimit.allow(
+    within_budget = ratelimit.allow(
         session, ratelimit.KIND_ORDER_IP, ip, settings.rate_max_per_ip
-    ) or not ratelimit.allow(
+    ) and ratelimit.allow(
         session, ratelimit.KIND_ORDER_EMAIL, data.email, settings.rate_max_per_email
-    ):
+    )
+    session.commit()
+    if not within_budget:
         return form_page(data=data, banner="error.rate_limited", status_code=429)
 
     # 5) Persist pending offer request + send the verification e-mail.

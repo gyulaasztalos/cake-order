@@ -18,6 +18,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from app import __version__
+from app.config import settings
 from app.db import engine
 from app.i18n import resolve_locale
 from app.routers import orders as orders_router
@@ -43,11 +44,24 @@ SECURITY_HEADERS = {
 }
 
 
+def _safe_redirect_path(raw_path: str) -> str:
+    """A same-origin path for the post-lang redirect. Anything not a single
+    leading-slash absolute path (e.g. `//evil.com`, a scheme, backslashes)
+    collapses to `/` so the Location header can't become an open redirect."""
+    if raw_path.startswith("/") and not raw_path.startswith("//") and "\\" not in raw_path:
+        return raw_path
+    return "/"
+
+
 @app.middleware("http")
 async def security_headers(request: Request, call_next) -> Response:
+    # /metrics is ops-only: reachable in-cluster (Prometheus, internal Traefik)
+    # but 404 on the public host so the tunnel doesn't expose it.
+    if request.url.path == "/metrics" and request.headers.get("host", "") == settings.public_host:
+        response: Response = JSONResponse({"detail": "Not Found"}, status_code=404)
     # ?lang=xx on any GET page → persist the choice, redirect to a clean URL.
-    if request.method == "GET" and (lang := request.query_params.get("lang")) is not None:
-        response: Response = RedirectResponse(url=request.url.path, status_code=303)
+    elif request.method == "GET" and (lang := request.query_params.get("lang")) is not None:
+        response = RedirectResponse(url=_safe_redirect_path(request.url.path), status_code=303)
         response.set_cookie(
             "lang",
             resolve_locale(lang),

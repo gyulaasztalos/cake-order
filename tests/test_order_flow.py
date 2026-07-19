@@ -162,6 +162,38 @@ def test_rate_limit_per_email(clean_db, fast_form, outbox, monkeypatch):
     assert client.post("/ajanlatkeres", data=_form()).status_code == 429
 
 
+def test_crlf_name_is_rejected_not_500(clean_db, fast_form, outbox):
+    # A newline in the name would break the chef-mail Subject header; validation
+    # must reject it up front rather than 500 later at /verify.
+    r = client.post("/ajanlatkeres", data=_form(name="Bob\r\nBcc: x@evil.test"))
+    assert r.status_code == 422
+    assert outbox == []
+
+
+def test_too_fast_rerender_does_not_recheck_consent(outbox):
+    # Submitted without consent + too fast → re-render must NOT show consent ticked.
+    r = client.post("/ajanlatkeres", data=_form(consent="", form_token=issue_form_token()))
+    assert r.status_code == 400
+    body = r.text
+    consent_input = body[body.index('name="consent"') :]
+    assert "checked" not in consent_input[: consent_input.index(">")]
+
+
+def test_rate_events_survive_mailer_failure(clean_db, fast_form, monkeypatch):
+    from app.config import settings
+    from app.services import mailer
+
+    monkeypatch.setattr(settings, "rate_max_per_ip", 2)
+    monkeypatch.setattr(settings, "rate_max_per_email", 100)
+    monkeypatch.setattr(mailer, "_send", lambda msg: (_ for _ in ()).throw(mailer.MailerError("x")))
+
+    # Two failed sends still consume the per-IP budget → third is rate-limited,
+    # not another 502 (the events were not rolled back).
+    assert client.post("/ajanlatkeres", data=_form()).status_code == 502
+    assert client.post("/ajanlatkeres", data=_form()).status_code == 502
+    assert client.post("/ajanlatkeres", data=_form()).status_code == 429
+
+
 def test_chef_mail_failure_keeps_token_valid(clean_db, fast_form, outbox, monkeypatch):
     token = _submit_ok(outbox)
 

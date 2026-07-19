@@ -31,10 +31,14 @@ def run() -> dict[str, int]:
 
     session = SessionLocal()
     try:
+        # Key on update_date, not entry_date: a re-submit refreshes the row
+        # (new token, bumped update_date) but leaves entry_date at first insert.
+        # Purging on entry_date could delete a pending row whose freshly-issued
+        # link is still valid; update_date tracks the last activity.
         pending = cast(
             "CursorResult[Any]",
             session.execute(
-                delete(Order).where(Order.status == "pending", Order.entry_date < pending_cutoff)
+                delete(Order).where(Order.status == "pending", Order.update_date < pending_cutoff)
             ),
         ).rowcount
         confirmed = cast(

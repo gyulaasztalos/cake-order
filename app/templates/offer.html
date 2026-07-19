@@ -102,7 +102,7 @@
 
       <label class="co-consent">
         <input type="checkbox" name="consent" value="true"
-               {% if data and not errors.get('consent') %}checked{% endif %}>
+               {% if data and data.consent %}checked{% endif %}>
         <span>{{ t('form.consent', locale, link='<a href="/privacy">' ~ t('form.consent_link', locale) ~ '</a>') | safe }}</span>
       </label>
       {% if errors.get('consent') %}<small class="co-error">{{ t(errors['consent'], locale) }}</small>{% endif %}
