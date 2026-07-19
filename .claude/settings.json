@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python -m pytest -p no:cacheprovider --ignore=tests/test_browser_modules.py -q)",
+      "Bash(.venv/bin/python -m pytest tests/test_backend.py tests/test_order_flow.py -q -p no:cacheprovider)",
+      "Bash(pkill -f \"pytest\")",
+      "Bash(.venv/bin/python -m pytest tests/test_backend.py -q -p no:cacheprovider)",
+      "Bash(.venv/bin/python -m pytest tests/test_order_flow.py -q -p no:cacheprovider)",
+      "Bash(curl -s --max-time 20 \"https://api.github.com/repos/umami-software/umami/releases/latest\")",
+      "Bash(git commit -q -m ' *)"
+    ]
+  }
+}

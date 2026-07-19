@@ -38,13 +38,15 @@ def _payload(order: Order) -> dict[str, object]:
     }
 
 
-def forward_order(order: Order) -> bool:
-    """Push a confirmed order to cake-pricing. Returns True if forwarded."""
+def forward_order(order: Order) -> int | None:
+    """Push a confirmed order to cake-pricing. Returns the created draft
+    offer's id (to link to it), or None if forwarding is disabled/unconfigured.
+    Raises on an HTTP/transport error — the caller treats that as best-effort."""
     if not settings.backend_enabled:
-        return False
+        return None
     if not (settings.backend_url and settings.backend_token):
         logger.warning("backend enabled but URL/token missing — skipping forward")
-        return False
+        return None
     response = httpx.post(
         f"{settings.backend_url.rstrip('/')}/api/intake/offers",
         json=_payload(order),
@@ -53,8 +55,17 @@ def forward_order(order: Order) -> bool:
         trust_env=False,
     )
     response.raise_for_status()
-    logger.info("order %s forwarded: %s", order.id, response.json())
-    return True
+    data = response.json()
+    logger.info("order %s forwarded: %s", order.id, data)
+    offer_id = data.get("offer_id")
+    return int(offer_id) if offer_id is not None else None
+
+
+def pricing_offer_url(offer_id: int | None) -> str | None:
+    """The chef's link to price the created draft, or None if unavailable."""
+    if offer_id is None or not settings.pricing_base_url:
+        return None
+    return f"{settings.pricing_base_url}/offers/{offer_id}/edit"
 
 
 def mark_forwarded(order: Order) -> None:

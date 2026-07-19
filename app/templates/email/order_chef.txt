@@ -11,5 +11,7 @@
 
 {{ t('email.field.description', locale) }}:
 {{ order.description }}
-
+{% if offer_url %}
+{{ t('email.chef.open_draft', locale) }}: {{ offer_url }}
+{% endif %}
 {{ t('email.footer', locale) }}

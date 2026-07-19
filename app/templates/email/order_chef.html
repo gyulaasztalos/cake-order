@@ -2,4 +2,12 @@
 {% block body %}
   <h2 style="margin-top:0;color:#8E2649;">{{ t('email.chef.title', locale) }}</h2>
   {% include "email/_order_table.html" %}
+  {% if offer_url %}
+  <p style="text-align:center;margin:24px 0;">
+    <a href="{{ offer_url }}"
+       style="display:inline-block;background:#8E2649;color:#FFF7F4;text-decoration:none;padding:12px 28px;border-radius:999px;font-size:15px;font-weight:bold;">
+      {{ t('email.chef.open_draft', locale) }}
+    </a>
+  </p>
+  {% endif %}
 {% endblock %}

@@ -72,6 +72,10 @@ class Settings:
     backend_enabled: bool = os.getenv("BACKEND_ENABLED", "false").lower() == "true"
     backend_url: str = os.getenv("BACKEND_URL", "")
     backend_token: str = os.getenv("BACKEND_TOKEN", "")
+    # Public base URL of the internal cake-pricing UI, used ONLY to build the
+    # chef's "open the draft" link in the order e-mail (e.g.
+    # https://torta.local.asztalos.net). Empty = no link.
+    pricing_base_url: str = os.getenv("PRICING_BASE_URL", "").rstrip("/")
 
 
 settings = Settings()

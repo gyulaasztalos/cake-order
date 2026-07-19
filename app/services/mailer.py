@@ -82,9 +82,9 @@ def send_verification(order: Order, verify_url: str) -> None:
     _send(msg)
 
 
-def send_order_to_chef(order: Order) -> None:
+def send_order_to_chef(order: Order, offer_url: str | None = None) -> None:
     # Chef mail is always Hungarian regardless of the customer's language.
-    ctx = {"locale": "hu", "order": order}
+    ctx = {"locale": "hu", "order": order, "offer_url": offer_url}
     msg = _build(
         settings.order_inbox,
         t("email.chef.subject", "hu", name=order.name, due_date=order.due_date.isoformat()),

@@ -227,9 +227,21 @@ def verify(request: Request, token: str, session: Session = Depends(get_session)
     if state == "invalid" or order is None:
         return templates.TemplateResponse(request, "verify_invalid.html", ctx, status_code=404)
 
-    # The chef e-mail IS the offer request (until phase 2) — confirm only if it sends.
+    # Forward to cake-pricing FIRST (best-effort) so the chef e-mail can link to
+    # the created draft. The row lock in find_by_token serializes concurrent hits
+    # (an e-mail scanner prefetch can't double-forward). A rare retry after a
+    # chef-mail failure could create a second draft — acceptable; the chef
+    # deletes the duplicate.
+    offer_id: int | None = None
     try:
-        mailer.send_order_to_chef(order)
+        offer_id = backend.forward_order(order)
+    except Exception:
+        logger.exception("backend forward failed (continuing without a draft link)")
+    offer_url = backend.pricing_offer_url(offer_id)
+
+    # The chef e-mail is the primary delivery — confirm only if it sends.
+    try:
+        mailer.send_order_to_chef(order, offer_url)
     except mailer.MailerError:
         logger.exception("chef offer e-mail failed")
         session.rollback()
@@ -237,16 +249,13 @@ def verify(request: Request, token: str, session: Session = Depends(get_session)
             request, "verify_failed.html", ctx | {"token": token}, status_code=502
         )
     orders.mark_confirmed(order)
+    if offer_id is not None:
+        backend.mark_forwarded(order)
 
-    # Best-effort extras: customer confirmation + phase-2 forward.
+    # Best-effort: customer confirmation.
     try:
         mailer.send_customer_confirmation(order)
     except mailer.MailerError:
         logger.exception("customer confirmation e-mail failed")
-    try:
-        if backend.forward_order(order):
-            backend.mark_forwarded(order)
-    except Exception:
-        logger.exception("backend forward failed (offer request stays confirmed)")
 
     return templates.TemplateResponse(request, "verified.html", ctx)

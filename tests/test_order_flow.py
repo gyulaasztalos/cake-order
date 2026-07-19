@@ -121,6 +121,28 @@ def test_happy_path_submit_then_verify(clean_db, fast_form, outbox):
         s.close()
 
 
+def test_chef_mail_links_to_draft_when_forwarded(clean_db, fast_form, outbox, monkeypatch):
+    from app.config import settings
+    from app.services import backend
+
+    monkeypatch.setattr(settings, "pricing_base_url", "https://torta.local.asztalos.net")
+    monkeypatch.setattr(backend, "forward_order", lambda order: 77)
+
+    token = _submit_ok(outbox)
+    assert client.get(f"/verify/{token}").status_code == 200
+    chef_text = outbox[1].get_body(("plain",)).get_content()
+    assert "https://torta.local.asztalos.net/offers/77/edit" in chef_text
+
+    from app.db import SessionLocal
+    from app.models import Order
+
+    s = SessionLocal()
+    try:
+        assert s.query(Order).one().status == "forwarded"  # offer_id present → forwarded
+    finally:
+        s.close()
+
+
 def test_verify_link_is_single_use(clean_db, fast_form, outbox):
     token = _submit_ok(outbox)
     assert client.get(f"/verify/{token}").status_code == 200
