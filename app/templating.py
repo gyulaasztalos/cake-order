@@ -46,4 +46,6 @@ templates.env.globals["default_locale"] = settings.default_locale
 templates.env.globals["app_env"] = settings.app_env
 templates.env.globals["version"] = __version__
 templates.env.globals["year"] = dt.date.today().year
+# The public contact address, env-driven (same ORDER_INBOX the mailer sends to).
+templates.env.globals["contact_email"] = settings.order_inbox
 templates.env.filters["date"] = format_date

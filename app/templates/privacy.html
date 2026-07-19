@@ -6,7 +6,7 @@
 
     {% if locale == 'en' %}
       <p><strong>Data controller:</strong> Anita Tortái (anitatortai.hu) —
-        contact: info@anitatortai.hu.</p>
+        contact: {{ contact_email }}.</p>
       <p><strong>What we collect and why.</strong> When you place an order we ask for
         your name, e-mail address, optional phone number, the requested date, and your
         cake description. We use these solely to verify your e-mail address, to prepare
@@ -22,12 +22,12 @@
       <p><strong>Recipients.</strong> Your data is not shared with third parties; it is
         processed on our own infrastructure and delivered to us by e-mail.</p>
       <p><strong>Your rights.</strong> You may request access, correction, or deletion
-        of your data, and withdraw consent at any time, at info@anitatortai.hu. You may
+        of your data, and withdraw consent at any time, at {{ contact_email }}. You may
         lodge a complaint with the Hungarian supervisory authority (NAIH,
         naih.hu).</p>
     {% elif locale == 'de' %}
       <p><strong>Verantwortlicher:</strong> Anita Tortái (anitatortai.hu) —
-        Kontakt: info@anitatortai.hu.</p>
+        Kontakt: {{ contact_email }}.</p>
       <p><strong>Was wir erheben und warum.</strong> Bei einer Bestellung fragen wir
         nach Ihrem Namen, Ihrer E-Mail-Adresse, optional Ihrer Telefonnummer, dem
         gewünschten Termin und Ihrer Tortenbeschreibung. Wir verwenden diese Daten
@@ -47,11 +47,11 @@
         zugestellt.</p>
       <p><strong>Ihre Rechte.</strong> Sie können jederzeit Auskunft, Berichtigung
         oder Löschung Ihrer Daten verlangen und Ihre Einwilligung widerrufen:
-        info@anitatortai.hu. Beschwerden richten Sie an die ungarische
+        {{ contact_email }}. Beschwerden richten Sie an die ungarische
         Aufsichtsbehörde (NAIH, naih.hu).</p>
     {% else %}
       <p><strong>Adatkezelő:</strong> Anita Tortái (anitatortai.hu) —
-        kapcsolat: info@anitatortai.hu.</p>
+        kapcsolat: {{ contact_email }}.</p>
       <p><strong>Milyen adatokat kezelünk és miért?</strong> Rendeléskor elkérjük a
         nevét, e-mail címét, opcionálisan telefonszámát, a kért határidőt és a torta
         leírását. Ezeket kizárólag az e-mail cím megerősítésére, az árajánlat
@@ -67,7 +67,7 @@
       <p><strong>Címzettek.</strong> Adatait harmadik félnek nem adjuk át; saját
         infrastruktúránkon dolgozzuk fel, és e-mailben jut el hozzánk.</p>
       <p><strong>Az Ön jogai.</strong> Bármikor kérhet hozzáférést, helyesbítést vagy
-        törlést, és visszavonhatja hozzájárulását: info@anitatortai.hu. Panasszal a
+        törlést, és visszavonhatja hozzájárulását: {{ contact_email }}. Panasszal a
         NAIH-hoz (naih.hu) fordulhat.</p>
     {% endif %}
 
