@@ -55,7 +55,7 @@ def structured_data_json() -> Markup:
     """The JSON-LD as Markup so Jinja autoescaping leaves it byte-for-byte."""
     # Safe: STRUCTURED_DATA_JSON is our own json.dumps() output (no user input);
     # rendered byte-for-byte so its CSP hash matches.
-    return Markup(STRUCTURED_DATA_JSON)  # noqa: S704
+    return Markup(STRUCTURED_DATA_JSON)  # noqa: S704  # nosec B704
 
 
 def structured_data_csp_hash() -> str:

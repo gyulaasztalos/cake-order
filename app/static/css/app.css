@@ -259,16 +259,22 @@ body {
   margin-top: 1.25rem;
 }
 
-/* Half-faded photo backdrop behind the hero copy (the SVG when no hero photo). */
+/* Half-faded photo backdrop on the RIGHT half of the hero, behind the copy
+   (the SVG when no hero photo). A left-edge gradient mask fades it into the
+   band so there's no hard vertical seam next to the text. */
 .co-hero-bg {
   position: absolute;
-  inset: 0;
-  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 50%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.28;
+  opacity: 0.32;
   z-index: 0;
   pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%);
+  mask-image: linear-gradient(to right, transparent, #000 22%);
 }
 
 .co-hero-copy {
