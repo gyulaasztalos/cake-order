@@ -259,9 +259,10 @@ body {
   margin-top: 1.25rem;
 }
 
-/* Half-faded photo backdrop on the RIGHT half of the hero, behind the copy
-   (the SVG when no hero photo). A left-edge gradient mask fades it into the
-   band so there's no hard vertical seam next to the text. */
+/* Full-strength photo on the RIGHT half of the hero, behind the copy (the SVG
+   when no hero photo). Only the left ~15% feathers out via a gradient mask, for
+   a smooth transition into the plain-color left side of the band — the rest of
+   the picture stays at full opacity, not washed out. */
 .co-hero-bg {
   position: absolute;
   top: 0;
@@ -270,11 +271,28 @@ body {
   width: 50%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.32;
   z-index: 0;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%);
-  mask-image: linear-gradient(to right, transparent, #000 22%);
+  /* Feather the left ~30% of the photo into the plain background. Eased with
+     intermediate stops (not one linear stop) so there's no visible seam where
+     it reaches full opacity — best practice for an image→solid-colour fade. */
+  --hero-fade: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 10%,
+    rgba(0, 0, 0, 0.45) 20%,
+    #000 32%
+  );
+  -webkit-mask-image: var(--hero-fade);
+  mask-image: var(--hero-fade);
+}
+
+/* On narrow screens the copy spans most of the width and sits over the photo,
+   so soften it there just enough to keep the text readable. */
+@media (max-width: 700px) {
+  .co-hero-bg {
+    opacity: 0.45;
+  }
 }
 
 .co-hero-copy {
