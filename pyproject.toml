@@ -1,6 +1,6 @@
 [project]
 name = "cake-order"
-version = "1.1.1"
+version = "1.1.2"
 description = "Public customer-facing cake order intake webapp for a one-person pastry business"
 readme = "README.md"
 requires-python = ">=3.14"
