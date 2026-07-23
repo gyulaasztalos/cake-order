@@ -147,3 +147,10 @@ the full list and defaults. Highlights: `BASE_URL`, `PUBLIC_HOSTS`,
   security model, deployment topology, and gotchas.
 - [`CLAUDE.md`](CLAUDE.md) — orientation for AI assistants (commands, layout,
   invariants).
+
+## License
+
+© 2026 Gyula Asztalos. Licensed under the **GNU Affero General Public License v3.0**
+(AGPL-3.0) — see [`LICENSE`](LICENSE). Because this is a network application, the AGPL's
+§13 applies: if you run a modified version as a service, you must offer its users the
+corresponding source. The source is at <https://github.com/gyulaasztalos/cake-order>.
