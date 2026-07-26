@@ -83,11 +83,21 @@
             {% endfor %}
           </select>
         </div>
+        {# Slice count is REQUIRED for the per-slice cake types and optional for
+           Desszertek/Egyéb. Rendered for the currently-selected type; form.js
+           keeps the marker + `required` in sync when the type changes (the
+           server re-validates either way). #}
+        {% set portions_required = data and data.cake_type in portions_required_types %}
         <div>
-          <label for="portions">{{ t('form.portions', locale) }} <small>({{ t('form.optional', locale) }})</small></label>
+          <label for="portions">{{ t('form.portions', locale) }}
+            <span class="co-req" data-portions-req {% if not portions_required %}hidden{% endif %}>*</span>
+            <small data-portions-opt {% if portions_required %}hidden{% endif %}>({{ t('form.optional', locale) }})</small>
+          </label>
           <input type="number" id="portions" name="portions" min="1" max="500" inputmode="numeric"
+                 data-portions-required-types="{{ portions_required_types | join(',') }}"
                  placeholder="{{ t('form.portions_ph', locale) }}"
                  value="{{ data.portions if data and data.portions else '' }}"
+                 {% if portions_required %}required{% endif %}
                  {% if errors.get('portions') %}aria-invalid="true"{% endif %}>
           {% if errors.get('portions') %}<small class="co-error">{{ t(errors['portions'], locale) }}</small>{% endif %}
         </div>

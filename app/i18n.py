@@ -181,6 +181,7 @@ HU: dict[str, str] = {
     "error.due_date_too_soon": "A megadott dátum túl közeli — legalább {days} nap szükséges.",
     "error.cake_type_required": "Kérlek, válassz torta típust.",
     "error.portions_invalid": "Kérlek, valós szeletszámot adj meg.",
+    "error.portions_required": "Ehhez a tortatípushoz kérlek, add meg a szeletek számát.",
     "error.description_required": "Kérlek, írd le, mit képzeltél el.",
     "error.description_too_long": "A leírás túl hosszú (legfeljebb {max} karakter).",
     "error.consent_required": "Az ajánlatkéréshez el kell fogadnod az adatkezelési tájékoztatót.",
@@ -403,6 +404,7 @@ EN: dict[str, str] = {
     "error.due_date_too_soon": "That date is too soon — at least {days} days are needed.",
     "error.cake_type_required": "Please choose a cake type.",
     "error.portions_invalid": "Please enter a realistic number of slices.",
+    "error.portions_required": "Please enter the number of slices for this cake type.",
     "error.description_required": "Please describe what you have in mind.",
     "error.description_too_long": "The description is too long (at most {max} characters).",
     "error.consent_required": "You need to accept the privacy notice to send a request.",
@@ -624,6 +626,7 @@ DE: dict[str, str] = {
     ),
     "error.cake_type_required": "Bitte wählen Sie einen Tortentyp.",
     "error.portions_invalid": "Bitte geben Sie eine realistische Stückzahl ein.",
+    "error.portions_required": "Bitte geben Sie für diese Tortenart die Stückzahl an.",
     "error.description_required": "Bitte beschreiben Sie Ihre Vorstellung.",
     "error.description_too_long": "Die Beschreibung ist zu lang (höchstens {max} Zeichen).",
     "error.consent_required": "Zur Anfrage müssen Sie die Datenschutzerklärung akzeptieren.",
@@ -702,6 +705,9 @@ LOCALE_NAMES = {"hu": "Magyar", "en": "English", "de": "Deutsch"}
 
 # Cake-type option order for the form select (values stored in ORDERS.cake_type).
 CAKE_TYPES = ("birthday", "kids", "wedding", "shaped", "dessert", "other")
+# Cake types that are priced per slice, so the slice count is REQUIRED for them.
+# Desszertek/Egyéb are sized freely, so it stays optional there (owner's rule).
+PORTIONS_REQUIRED_TYPES = ("birthday", "kids", "wedding", "shaped")
 
 # Available flavors (owner's list, 2026-07-18). Slugs stored in ORDERS.flavor;
 # display names come from the catalogs (brand names stay untranslated).

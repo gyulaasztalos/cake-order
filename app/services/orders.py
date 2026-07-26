@@ -19,7 +19,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.i18n import CAKE_TYPES, FLAVORS
+from app.i18n import CAKE_TYPES, FLAVORS, PORTIONS_REQUIRED_TYPES
 from app.models import Order
 
 # Permissive on purpose: digits, spaces, +, -, /, parentheses. It is a contact
@@ -109,6 +109,10 @@ def validate(
         else:
             if not 1 <= data.portions <= 500:
                 data.errors["portions"] = "error.portions_invalid"
+    elif data.cake_type in PORTIONS_REQUIRED_TYPES:
+        # Per-slice cake types need the slice count to be quotable at all; only
+        # Desszertek/Egyéb may omit it. An invalid cake_type already errored above.
+        data.errors["portions"] = "error.portions_required"
 
     if not data.description:
         data.errors["description"] = "error.description_required"

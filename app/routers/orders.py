@@ -17,7 +17,13 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db import get_session
-from app.i18n import CAKE_TYPES, FLAVORS, enabled_locale_names, resolve_locale
+from app.i18n import (
+    CAKE_TYPES,
+    FLAVORS,
+    PORTIONS_REQUIRED_TYPES,
+    enabled_locale_names,
+    resolve_locale,
+)
 from app.services import backend, mailer, orders, ratelimit
 from app.services.security import check_form_token, issue_form_token
 from app.templating import templates
@@ -129,6 +135,7 @@ def _form_ctx(request: Request, **extra: object) -> dict[str, object]:
         min_due=orders.earliest_due_date().isoformat(),
         cake_types=CAKE_TYPES,
         flavors=FLAVORS,
+        portions_required_types=PORTIONS_REQUIRED_TYPES,
         form_token=issue_form_token(),
     )
     ctx.update({"data": None, "errors": {}, "banner": None})

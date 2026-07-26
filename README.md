@@ -20,7 +20,9 @@ address on the submitted request.
 - **Multi-page marketing site** — landing/hero, cake & dessert galleries, about,
   contact, privacy — Hungarian by default, English selectable (German catalog
   ships but is disabled at launch).
-- **Offer-request form** (`/ajanlatkeres`) with server-side validation and
+- **Offer-request form** (`/ajanlatkeres`) with server-side validation (the
+  slice count is required for the per-slice cake types, optional for
+  Desszertek/Egyéb) and
   layered bot defense (honeypot + signed form-timestamp + per-IP/e-mail rate
   limits; Cloudflare Turnstile wired but off).
 - **Double opt-in**: a submission is *pending* until the customer clicks the

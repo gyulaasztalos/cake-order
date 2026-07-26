@@ -79,6 +79,13 @@ Key columns: customer fields (`name`, `email`, `phone?`, `due_date`,
 the verification triple `token_hash` (SHA-256 hex — **the raw token is never
 stored**), `token_expires_at`, `verified_at`, `forwarded_at`.
 
+`portions` (Torta szeletek száma) is nullable in the DB but **conditionally
+required by the form**: the per-slice cake types (`birthday`, `kids`, `wedding`,
+`shaped` — `i18n.PORTIONS_REQUIRED_TYPES`) must supply it, while `dessert`/`other`
+may omit it. Enforced in `orders.validate()`; `form.js` only mirrors the `required`
+attribute for immediate feedback. It is forwarded to cake-pricing's intake API,
+which stores it on `offers.portions` (never in the notes).
+
 Invariants enforced in the DB (not just the app):
 - `CHECK` on `status` and `char_length(description) <= 4000`.
 - `UNIQUE(token_hash)`.
