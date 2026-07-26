@@ -8,6 +8,9 @@
       "Bash(.venv/bin/python -m pytest tests/test_order_flow.py -q -p no:cacheprovider)",
       "Bash(curl -s --max-time 20 \"https://api.github.com/repos/umami-software/umami/releases/latest\")",
       "Bash(git commit -q -m ' *)"
+    ],
+    "additionalDirectories": [
+      "/Users/red/Documents/GitHub/cake-pricing"
     ]
   }
 }
