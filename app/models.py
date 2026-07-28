@@ -69,6 +69,7 @@ class Order(Base):
     # Concept-form fields: cake type from a fixed option set, optional flavor
     # (owner's list, i18n.FLAVORS) and optional slices.
     cake_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    sponge: Mapped[str | None] = mapped_column(String(32))
     flavor: Mapped[str | None] = mapped_column(String(32))
     portions: Mapped[int | None] = mapped_column()
     description: Mapped[str] = mapped_column(Text, nullable=False)

@@ -75,7 +75,8 @@ Lifecycle status: **pending → confirmed → forwarded** (or **expired**, set b
 retention job for dead pending rows before purge).
 
 Key columns: customer fields (`name`, `email`, `phone?`, `due_date`,
-`cake_type`, `flavor?`, `portions?`, `description`, `locale`, `consent_at`); and
+`cake_type`, `sponge?`, `flavor?`, `portions?`, `description`, `locale`,
+`consent_at`); and
 the verification triple `token_hash` (SHA-256 hex — **the raw token is never
 stored**), `token_expires_at`, `verified_at`, `forwarded_at`.
 

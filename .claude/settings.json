@@ -7,10 +7,14 @@
       "Bash(.venv/bin/python -m pytest tests/test_backend.py -q -p no:cacheprovider)",
       "Bash(.venv/bin/python -m pytest tests/test_order_flow.py -q -p no:cacheprovider)",
       "Bash(curl -s --max-time 20 \"https://api.github.com/repos/umami-software/umami/releases/latest\")",
-      "Bash(git commit -q -m ' *)"
+      "Bash(git commit -q -m ' *)",
+      "Bash(.venv/bin/python -c ' *)",
+      "Bash(xargs -n1 basename)"
     ],
     "additionalDirectories": [
-      "/Users/red/Documents/GitHub/cake-pricing"
+      "/Users/red/Documents/GitHub/cake-pricing",
+      "/Users/red/Documents/GitHub/cake-pricing/app/routers",
+      "/Users/red/Documents/GitHub/cake-pricing/tests"
     ]
   }
 }

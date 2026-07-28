@@ -19,6 +19,7 @@ def _validate(cake_type: str, portions_raw: str):
         phone="",
         due_date_raw=(earliest_due_date() + dt.timedelta(days=1)).isoformat(),
         cake_type=cake_type,
+        sponge="",
         flavor="",
         portions_raw=portions_raw,
         description="Egy szép torta kérek.",

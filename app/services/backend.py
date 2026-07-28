@@ -30,6 +30,7 @@ def _payload(order: Order) -> dict[str, object]:
         "due_date": order.due_date.isoformat(),
         # The chef reads Hungarian labels, not slugs.
         "theme": t(f"form.cake_type.{order.cake_type}", "hu"),
+        "sponge": t(f"form.sponge.{order.sponge}", "hu") if order.sponge else None,
         "flavor": t(f"form.flavor.{order.flavor}", "hu") if order.flavor else None,
         "portions": order.portions,
         "description": order.description,

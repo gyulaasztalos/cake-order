@@ -71,6 +71,19 @@
           {% if errors.get('cake_type') %}<small class="co-error">{{ t(errors['cake_type'], locale) }}</small>{% endif %}
         </div>
         <div>
+          <label for="sponge">{{ t('form.sponge', locale) }} <small>({{ t('form.sponge_hint', locale) }})</small></label>
+          <select id="sponge" name="sponge">
+            <option value="" {% if not data or not data.sponge %}selected{% endif %}>
+              {{ t('form.sponge_ph', locale) }}
+            </option>
+            {% for sp in sponges %}
+              <option value="{{ sp }}" {% if data and data.sponge == sp %}selected{% endif %}>
+                {{ t('form.sponge.' ~ sp, locale) }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
           <label for="flavor">{{ t('form.flavor', locale) }} <small>({{ t('form.flavor_hint', locale) }})</small></label>
           <select id="flavor" name="flavor">
             <option value="" {% if not data or not data.flavor %}selected{% endif %}>

@@ -21,6 +21,7 @@ from app.i18n import (
     CAKE_TYPES,
     FLAVORS,
     PORTIONS_REQUIRED_TYPES,
+    SPONGES,
     enabled_locale_names,
     resolve_locale,
 )
@@ -135,6 +136,7 @@ def _form_ctx(request: Request, **extra: object) -> dict[str, object]:
         min_due=orders.earliest_due_date().isoformat(),
         cake_types=CAKE_TYPES,
         flavors=FLAVORS,
+        sponges=SPONGES,
         portions_required_types=PORTIONS_REQUIRED_TYPES,
         form_token=issue_form_token(),
     )
@@ -246,6 +248,7 @@ def submit_offer(
     phone: str = Form(""),
     due_date: str = Form(""),
     cake_type: str = Form(""),
+    sponge: str = Form(""),
     flavor: str = Form(""),
     portions: str = Form(""),
     description: str = Form(""),
@@ -269,7 +272,16 @@ def submit_offer(
 
     def validated() -> orders.OrderInput:
         return orders.validate(
-            name, email, phone, due_date, cake_type, flavor, portions, description, consent
+            name,
+            email,
+            phone,
+            due_date,
+            cake_type,
+            sponge,
+            flavor,
+            portions,
+            description,
+            consent,
         )
 
     # 1) Honeypot: answer success, do nothing. Bots learn nothing.
