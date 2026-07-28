@@ -64,6 +64,15 @@ imports can be slow — be patient rather than assuming a hang.
 - **Every user-facing string goes through `t()`** with all three locales
   (`hu`/`en`/`de`) added. Hungarian voice is informal (*tegeződés*); customers
   send an *ajánlatkérés*, never a *rendelés*.
+- **This app owns the form's choice lists** (`CAKE_TYPES`, `FLAVORS`, `SPONGES` in
+  `i18n.py`): a tuple of **slugs** + `form.<field>.<slug>` labels in all three
+  catalogs. Slugs are what `ORDERS` stores, and `validate()` **drops anything
+  outside the list** rather than persisting it (tamper guard). The intake forward
+  (`services/backend.py`) sends the **Hungarian display name**, because cake-pricing
+  keeps these as free text so the chef can edit/group them. Adding one = i18n
+  (constant + labels ×3 + `email.field.*`), model column + migration, `OrderInput`
+  + `validate()`, router Form param + context, the form `<select>`, and all three
+  e-mail templates. Mirror `sponge` (added 2026-07-26) for the full list.
 - **Commit before any externally observable success** (303 redirect, intake ack).
   Rate events are committed before mailing; the chef e-mail is the primary
   delivery and gates the `confirmed` status.
