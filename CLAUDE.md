@@ -81,7 +81,25 @@ imports can be slow — be patient rather than assuming a hang.
 - **`MIN_LEAD_DAYS` and all limits are env-driven** — read `settings.*`, don't
   hardcode. Templates already interpolate `{days}` from `settings.min_lead_days`.
 - **CI parity** with cake-pricing (Postgres service + `alembic upgrade head`);
-  keep `.github/workflows/ci.yml` equivalent.
+  keep `.github/workflows/ci.yml` equivalent, and `auto-release.yml` too.
+- **Releases are automatic** (`.github/workflows/auto-release.yml`). When a merged
+  PR changes anything that goes into the image (`app/`, `migrations/`,
+  `alembic.ini`, `Dockerfile`, `.dockerignore`, `pyproject.toml`, `uv.lock`), the
+  workflow waits for CI on the merge, bumps the **patch** version in
+  `pyproject.toml` + `app/__init__.py` + `uv.lock` (commit
+  `chore(release): X.Y.Z (#PR)`), tags `vX.Y.Z`, publishes a GitHub release whose
+  notes are the commit subjects since the previous tag, and dispatches
+  `build-and-push.yml` for the tag. Renovate then bumps `image.tag` in
+  homelab-charts and ArgoCD. Tests/docs/CI-only merges and direct pushes to `main`
+  don't release. **Minor/major**: set the version by hand in the PR (all three
+  files, then `uv lock`); the workflow releases that version instead of bumping.
+  Don't push release tags by hand: a manual tag skips the version bump.
+- **Docker: builder and runtime use the same Python image.** The venv's interpreter
+  is a link into the builder's Python, so both stages are `FROM python:X.Y-slim-*`
+  and uv is copied in (`COPY --from=ghcr.io/astral-sh/uv:…`); Renovate then bumps
+  both `FROM` lines in one PR. A `uv:…-python3.N` builder against a different
+  runtime Python produces an image that can't start (the runtime moved to 3.15
+  alone on 2026-10-13).
 - **Python 3.14**: `except A, B:` without parens is valid (PEP 758) — ruff
   formatting that removes the parens is correct.
 

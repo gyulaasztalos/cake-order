@@ -205,8 +205,10 @@ own Postgres; the privacy page copy switches to describe it. See the ArgoCD
 
 ## 9. Deployment topology
 
-- **Image**: multi-arch, `python:3.14-slim`, runs `uvicorn app.main:app` on
-  `:8000`. Built on tag push; Renovate bumps the tag in the ArgoCD repo.
+- **Image**: multi-arch, `python:3.15-slim-trixie` (the uv builder stage uses the
+  same Python image), runs `uvicorn app.main:app` on `:8000`. Built and released
+  automatically when a merged PR changes the image contents; Renovate bumps the
+  tag in homelab-charts and the ArgoCD repo.
 - **k3s / ArgoCD** (`apps/cake-order/install/`): Deployment (+ init container that
   copies gallery photos off NFS and generates thumbnails), Service, Traefik
   IngressRoute, a **NetworkPolicy** treating the pod as a DMZ, and a **purge
