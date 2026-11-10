@@ -117,8 +117,10 @@ into the image (application code, migrations, `Dockerfile`, dependencies), the
    (`asztalosgyula/cake-order`) and GHCR (`ghcr.io/gyulaasztalos/cake-order`).
 
 Renovate in homelab-charts and the ArgoCD repo then bumps the deployed image tag →
-ArgoCD syncs it to the cluster. Merges that only touch tests, docs or CI don't
-release. For a minor or major release, set the version by hand in the pull
+ArgoCD syncs it to the cluster. The image carries OCI labels
+(`org.opencontainers.image.source`, `.version`, `.revision`, and `.url` pointing at
+its release page), so those Renovate PRs include the release notes. Merges that only
+touch tests, docs or CI don't release. For a minor or major release, set the version by hand in the pull
 request; the workflow releases that version instead of bumping the patch.
 
 ## Endpoints
