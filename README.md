@@ -103,15 +103,23 @@ docker run --rm -p 8000:8000 cake-order:dev   # CMD runs uvicorn on :8000
 
 Every push/PR runs the workflow: `ruff check` + `ruff format --check`, `mypy`,
 `alembic upgrade head` against a Postgres service, `pytest`, plus `bandit` and
-`pip-audit`. Pushing a semver tag builds and pushes a multi-arch image to Docker
-Hub (`asztalosgyula/cake-order`) and GHCR (`ghcr.io/gyulaasztalos/cake-order`):
+`pip-audit`.
 
-```bash
-git tag v1.0.0 && git push origin v1.0.0
-```
+Releases are automatic. When a merged pull request changes anything that goes
+into the image (application code, migrations, `Dockerfile`, dependencies), the
+**Auto release** workflow:
 
-Renovate in the ArgoCD repo then bumps the deployed image tag → ArgoCD syncs it
-to the cluster.
+1. waits for CI to pass on the merge commit,
+2. bumps the patch version in `pyproject.toml`, `app/__init__.py` and `uv.lock`,
+3. tags `vX.Y.Z` and publishes a GitHub release listing the commits since the
+   previous release,
+4. builds and pushes the multi-arch image to Docker Hub
+   (`asztalosgyula/cake-order`) and GHCR (`ghcr.io/gyulaasztalos/cake-order`).
+
+Renovate in homelab-charts and the ArgoCD repo then bumps the deployed image tag →
+ArgoCD syncs it to the cluster. Merges that only touch tests, docs or CI don't
+release. For a minor or major release, set the version by hand in the pull
+request; the workflow releases that version instead of bumping the patch.
 
 ## Endpoints
 
