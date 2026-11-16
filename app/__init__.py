@@ -1,3 +1,3 @@
 """cake-order — public customer-facing cake order intake webapp."""
 
-__version__ = "1.4.3"
+__version__ = "1.4.4"
